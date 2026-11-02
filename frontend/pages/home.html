@@ -135,16 +135,12 @@
 
         <nav class="hidden items-center gap-space-xs xl:flex" data-active-classes="bg-primary-container text-on-primary font-label-lg rounded-lg">
           <a aria-current="page" class="rounded-lg bg-primary-container px-space-sm py-space-xs font-label-lg text-on-primary" data-path="peta-dan-lokasi" href="#">Peta &amp; Lokasi</a>
-          <a class="rounded-lg px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface" data-path="form-kontribusi-p04" href="#">Form Kontribusi (P04)</a>
-          <a class="rounded-lg px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface" data-path="hasil-dan-status-p05" href="#">Hasil &amp; Status (P05)</a>
-          <a class="rounded-lg px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface" data-path="panel-admin-p06" href="#">Panel Admin (P06)</a>
+          <a class="rounded-lg px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface" data-path="form-kontribusi-p04" href="#">Ulasan</a>
+          <a class="rounded-lg px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface" data-path="hasil-dan-status-p05" href="#" id="statusNavItem">Status</a>
+          <a class="hidden rounded-lg px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface" data-path="panel-admin-p06" href="#" id="adminNavItem">Panel Admin</a>
         </nav>
 
         <div class="flex shrink-0 items-center gap-space-xs md:gap-space-sm">
-          <a class="inline-flex items-center gap-space-xs rounded-full bg-surface-container-high px-space-sm py-space-xs font-label-sm text-label-sm text-on-surface transition-colors hover:bg-surface-container-highest" data-path="petunjuk-aplikasi" href="#">
-            <span class="material-symbols-outlined text-[16px] text-secondary">help</span>
-            <span class="hidden md:inline">Petunjuk Aplikasi</span>
-          </a>
           <a class="inline-flex items-center gap-space-xs rounded-full bg-primary px-space-sm py-space-xs font-label-sm text-label-sm text-on-primary transition-colors hover:bg-primary-container" data-path="masuk" href="#">
             <span class="hidden sm:inline">Tamu / Masuk</span>
             <span class="sm:hidden">Masuk</span>
@@ -157,15 +153,15 @@
 
       <nav class="flex items-center justify-start gap-space-xs overflow-x-auto bg-surface-container-low px-gutter py-space-xs shadow-[0_1px_4px_rgba(0,0,0,0.03)] xl:hidden" data-active-classes="bg-primary-container text-on-primary font-label-sm rounded-lg">
         <a aria-current="page" class="whitespace-nowrap rounded-lg bg-primary-container px-space-sm py-space-2xs font-label-sm text-on-primary" data-path="peta-dan-lokasi" href="#">Peta &amp; Lokasi</a>
-        <a class="whitespace-nowrap rounded-lg px-space-sm py-space-2xs font-label-sm text-label-sm text-on-surface-variant transition-colors hover:text-on-surface" data-path="form-kontribusi-p04" href="#">Form Kontribusi (P04)</a>
-        <a class="whitespace-nowrap rounded-lg px-space-sm py-space-2xs font-label-sm text-label-sm text-on-surface-variant transition-colors hover:text-on-surface" data-path="hasil-dan-status-p05" href="#">Hasil &amp; Status (P05)</a>
-        <a class="whitespace-nowrap rounded-lg px-space-sm py-space-2xs font-label-sm text-label-sm text-on-surface-variant transition-colors hover:text-on-surface" data-path="panel-admin-p06" href="#">Panel Admin (P06)</a>
+        <a class="whitespace-nowrap rounded-lg px-space-sm py-space-2xs font-label-sm text-label-sm text-on-surface-variant transition-colors hover:text-on-surface" data-path="form-kontribusi-p04" href="#">Ulasan</a>
+        <a class="whitespace-nowrap rounded-lg px-space-sm py-space-2xs font-label-sm text-label-sm text-on-surface-variant transition-colors hover:text-on-surface" data-path="hasil-dan-status-p05" href="#" id="statusNavItemMobile">Status</a>
+        <a class="hidden whitespace-nowrap rounded-lg px-space-sm py-space-2xs font-label-sm text-label-sm text-on-surface-variant transition-colors hover:text-on-surface" data-path="panel-admin-p06" href="#" id="adminNavItemMobile">Panel Admin</a>
       </nav>
     </header>
 
     <main class="min-h-[calc(100vh-80px)] w-full bg-surface pt-16">
       <div class="flex w-full flex-col">
-        <div class="sticky top-0 z-40 flex w-full flex-wrap items-center justify-between bg-primary px-gutter py-2 text-on-primary shadow-sm" id="stateBanner">
+        <div class="sticky top-0 z-40 hidden w-full flex-wrap items-center justify-between bg-primary px-gutter py-2 text-on-primary shadow-sm" id="stateBanner">
           <div class="flex items-center gap-space-sm">
             <span class="inline-flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-0.5 font-label-sm text-label-sm tracking-wide text-on-secondary">
               <span class="h-2 w-2 animate-ping rounded-full bg-tertiary-fixed"></span>
@@ -205,7 +201,7 @@
                   <div class="flex w-full items-center justify-end gap-2.5 md:w-auto">
                     <button class="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-tertiary-container px-4 font-label-lg text-label-lg text-on-tertiary shadow-sm transition-colors hover:bg-tertiary md:flex-none" onclick="handleContributionAction()">
                       <span class="material-symbols-outlined text-[20px] text-tertiary-fixed">add_location_alt</span>
-                      <span>+ Tambah Tempat (P04)</span>
+                      <span>+ Tambah Tempat</span>
                     </button>
                     <button class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-surface-container-high px-3.5 py-2 font-label-md text-label-md text-primary transition-colors hover:bg-surface-container-highest" onclick="switchView('viewAdminQueue')">
                       <span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
@@ -471,9 +467,9 @@
             <div class="mx-auto max-w-4xl">
               <div class="flex items-center justify-between pb-6">
                 <div>
-                  <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Layar Pengujian P04 (SCR-05)</span>
-                  <h1 class="font-headline-lg text-headline-lg text-primary">Form Kontribusi Tempat Baru</h1>
-                  <p class="mt-1 font-body-md text-body-md text-on-surface-variant">Bantu komunitas dengan menambahkan titik nugas dan detail stopkontak.</p>
+                  <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Formulir Ulasan</span>
+                  <h1 class="font-headline-lg text-headline-lg text-primary">Form Ulasan Lokasi</h1>
+                  <p class="mt-1 font-body-md text-body-md text-on-surface-variant">Bagikan pengalaman Anda tentang tempat nugas, fasilitas, dan kenyamanan stopkontak.</p>
                 </div>
                 <button class="inline-flex items-center gap-1.5 rounded-lg bg-surface-container px-3 py-2 font-label-md text-label-md text-on-surface transition-colors hover:bg-surface-container-high" onclick="switchView('viewMainMap')">
                   <span class="material-symbols-outlined text-[18px]">arrow_back</span> Kembali
@@ -564,7 +560,7 @@
                   <button class="h-12 w-full rounded-lg bg-surface-container px-6 font-label-lg text-label-lg text-on-surface transition-colors hover:bg-surface-container-high sm:w-auto" onclick="switchView('viewMainMap')" type="button">Batalkan</button>
                   <button class="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-tertiary-container px-8 font-label-lg text-label-lg text-on-tertiary shadow-md transition-all hover:bg-tertiary sm:w-auto" id="p04SubmitBtn" onclick="submitContributionForm()" type="button">
                     <span class="material-symbols-outlined text-[20px] text-tertiary-fixed">send</span>
-                    <span id="p04SubmitBtnText">Kirim Kontribusi Tempat</span>
+                    <span id="p04SubmitBtnText">Kirim Ulasan</span>
                   </button>
                 </div>
               </div>
@@ -589,7 +585,7 @@
                     </p>
                     <div class="flex flex-wrap items-center justify-center gap-3 pt-6">
                       <button class="rounded-lg bg-primary px-6 py-3 font-label-md text-label-md text-on-primary transition-colors hover:bg-primary-container" onclick="switchView('viewMainMap')">Kembali ke Peta Utama</button>
-                      <button class="rounded-lg bg-surface-container-high px-6 py-3 font-label-md text-label-md text-primary transition-colors hover:bg-surface-container-highest" onclick="switchView('viewAdminQueue')">Lihat di Antrean Admin (P06)</button>
+                      <button class="rounded-lg bg-surface-container-high px-6 py-3 font-label-md text-label-md text-primary transition-colors hover:bg-surface-container-highest" onclick="switchView('viewAdminQueue')">Lihat di Antrean Admin</button>
                     </div>
                   </div>
 
@@ -640,7 +636,7 @@
             <div class="mx-auto max-w-7xl">
               <div class="flex flex-col justify-between gap-4 pb-6 sm:flex-row sm:items-center">
                 <div>
-                  <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Layar Pengujian P06 (SCR-08)</span>
+                  <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Panel Admin</span>
                   <h1 class="font-headline-lg text-headline-lg text-primary">Dashboard Antrean Kurasi Kontribusi</h1>
                   <p class="mt-1 font-body-md text-body-md text-on-surface-variant">Review kontribusi masuk dari pengguna lapangan sebelum dipublikasikan ke peta publik.</p>
                 </div>
@@ -768,7 +764,7 @@
             <button class="flex-1 rounded-md py-1.5 font-label-md text-label-md text-on-surface-variant" id="authTabRegister" onclick="switchAuthTab('register')">Daftar Akun Baru</button>
           </div>
 
-          <button class="flex h-11 w-full items-center justify-center gap-3 rounded-lg bg-surface-container-low font-label-md text-label-md text-on-surface shadow-sm transition-colors hover:bg-surface-container" onclick="performSimulatedLogin('Budi Santoso (Google)')">
+          <button class="flex h-11 w-full items-center justify-center gap-3 rounded-lg bg-surface-container-low font-label-md text-label-md text-on-surface shadow-sm transition-colors hover:bg-surface-container" onclick="performSimulatedLogin('Budi Santoso (Google)', 'USER')">
             <svg class="h-4 w-4" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" /><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" /><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05" /><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335" /></svg>
             <span>Lanjutkan dengan Google</span>
           </button>
@@ -788,7 +784,7 @@
               <label class="font-label-sm text-label-sm text-on-surface">Kata Sandi</label>
               <input class="h-11 w-full rounded-lg bg-surface-container-low px-3.5 font-body-sm text-body-sm text-on-surface focus:outline-none" id="authPassword" value="••••••••" type="password" />
             </div>
-            <button class="mt-2 h-11 w-full rounded-lg bg-primary font-label-lg text-label-lg text-on-primary shadow-md transition-colors hover:bg-primary-container" onclick="performSimulatedLogin('Budi Santoso')">
+            <button class="mt-2 h-11 w-full rounded-lg bg-primary font-label-lg text-label-lg text-on-primary shadow-md transition-colors hover:bg-primary-container" onclick="performSimulatedLogin(document.getElementById('authEmail').value ? 'Budi Santoso' : 'Pengguna Baru', document.getElementById('authEmail').value.toLowerCase().includes('admin') ? 'ADMIN' : 'USER')">
               <span id="authSubmitText">Masuk ke Akun</span>
             </button>
           </div>
@@ -837,9 +833,9 @@
       </div>
     </div>
 
-    <div class="fixed bottom-4 right-4 z-50 w-80 rounded-2xl bg-primary/95 p-4 text-xs text-on-primary shadow-2xl backdrop-blur-md">
+    <div class="fixed bottom-4 right-4 z-50 hidden w-80 rounded-2xl bg-primary/95 p-4 text-xs text-on-primary shadow-2xl backdrop-blur-md" id="devStateSwitcher">
       <div class="mb-2 flex items-center justify-between pb-2">
-        <div class="flex items-center gap-1.5 font-label-sm font-bold text-tertiary-fixed"><span class="material-symbols-outlined text-[16px]">tune</span><span>Dev State Switcher (Modul 10)</span></div>
+        <div class="flex items-center gap-1.5 font-label-sm font-bold text-tertiary-fixed"><span class="material-symbols-outlined text-[16px]">tune</span><span>Dev State Switcher</span></div>
         <span class="rounded bg-surface-container-high/20 px-1.5 py-0.5 font-mono text-[10px] text-surface-container-high">12 States</span>
       </div>
       <div class="space-y-2">
@@ -915,26 +911,29 @@
           if (path === 'peta-dan-lokasi') {
             link.onclick = (e) => { e.preventDefault(); setDevScreen('MAIN'); };
           } else if (path === 'form-kontribusi-p04') {
-            link.onclick = (e) => { e.preventDefault(); setDevScreen('P04'); };
+            link.onclick = (e) => { e.preventDefault(); handleContributionAction(); };
           } else if (path === 'hasil-dan-status-p05') {
-            link.onclick = (e) => { e.preventDefault(); setDevScreen('P05'); };
+            link.onclick = (e) => { e.preventDefault(); handleStatusAction(); };
           } else if (path === 'panel-admin-p06') {
-            link.onclick = (e) => { e.preventDefault(); setDevScreen('P06'); };
+            link.onclick = (e) => { e.preventDefault(); handleAdminAction(); };
           } else if (path === 'petunjuk-aplikasi') {
             link.onclick = (e) => { e.preventDefault(); openOnboardingModal(); };
           } else if (path === 'masuk') {
-            link.onclick = (e) => { e.preventDefault(); openAuthModal('Masuk untuk mengakses semua fitur kontribusi.'); };
+            link.onclick = (e) => { e.preventDefault(); openAuthModal('Masuk atau daftar untuk menulis ulasan, melihat status, dan mengakses panel admin.'); };
           }
         });
       }
 
       function toggleUserSession() {
-        if (currentUser) {
+        if (!currentUser) {
+          currentUser = { name: 'Budi Santoso', email: 'budi.santoso@email.com', role: 'USER' };
+          showToast('Sesi diubah ke: Budi Santoso (Pengguna Terdaftar)');
+        } else if (currentUser.role === 'USER') {
+          currentUser = { name: 'Admin SNIJ', email: 'admin@snij.test', role: 'ADMIN' };
+          showToast('Sesi diubah ke: Admin SNIJ');
+        } else {
           currentUser = null;
           showToast('Sesi diubah ke: Mode Pengguna Tamu');
-        } else {
-          currentUser = { name: 'Budi Santoso', email: 'budi.santoso@email.com' };
-          showToast('Sesi diubah ke: Budi Santoso (Pengguna Terdaftar)');
         }
         updateUserSessionUI();
       }
@@ -942,9 +941,15 @@
       function updateUserSessionUI() {
         const userText = document.getElementById('userStatusText');
         const userIcon = document.getElementById('userStatusIcon');
+        const statusNavs = [document.getElementById('statusNavItem'), document.getElementById('statusNavItemMobile')];
+        const adminNavs = [document.getElementById('adminNavItem'), document.getElementById('adminNavItemMobile')];
+
+        statusNavs.forEach((nav) => nav && nav.classList.toggle('hidden', !currentUser));
+        adminNavs.forEach((nav) => nav && nav.classList.toggle('hidden', !(currentUser && currentUser.role === 'ADMIN')));
+
         if (currentUser) {
-          userText.innerText = currentUser.name;
-          userIcon.innerText = 'verified_user';
+          userText.innerText = currentUser.role === 'ADMIN' ? `${currentUser.name} • Admin` : currentUser.name;
+          userIcon.innerText = currentUser.role === 'ADMIN' ? 'shield' : 'verified_user';
         } else {
           userText.innerText = 'Tamu (Belum Login)';
           userIcon.innerText = 'person_off';
@@ -953,11 +958,29 @@
 
       function handleContributionAction() {
         if (!currentUser) {
-          openAuthModal('Masuk untuk berkontribusi menambahkan tempat baru ke direktori SNIJ.');
+          openAuthModal('Daftar atau masuk dulu untuk menulis ulasan dan mengirimkan feedback lokasi.');
         } else {
           switchView('viewFormContribution');
           setDevScreen('P04');
         }
+      }
+
+      function handleStatusAction() {
+        if (!currentUser) {
+          openAuthModal('Masuk untuk melihat status ulasan dan riwayat kontribusi Anda.');
+          return;
+        }
+        switchView('viewFeedbackResult');
+        setDevScreen('P05');
+      }
+
+      function handleAdminAction() {
+        if (!currentUser || currentUser.role !== 'ADMIN') {
+          openAuthModal('Hanya akun admin yang dapat membuka panel admin. Silakan masuk sebagai admin.');
+          return;
+        }
+        switchView('viewAdminQueue');
+        setDevScreen('P06');
       }
 
       function handleWriteReview(e, placeName) {
@@ -1016,11 +1039,19 @@
         }
       }
 
-      function performSimulatedLogin(userName) {
-        currentUser = { name: userName, email: document.getElementById('authEmail').value };
+      function performSimulatedLogin(userName, explicitRole) {
+        const email = document.getElementById('authEmail').value.trim().toLowerCase();
+        const nextRole = explicitRole || (email.includes('admin') ? 'ADMIN' : 'USER');
+        currentUser = { name: userName || 'Pengguna Baru', email, role: nextRole };
         updateUserSessionUI();
         closeAuthModal();
-        showToast(`Berhasil masuk sebagai ${userName}! Akses kontribusi dibuka.`);
+        if (nextRole === 'ADMIN') {
+          showToast('Berhasil masuk sebagai Admin. Panel admin sudah terbuka.');
+          switchView('viewAdminQueue');
+          setDevScreen('P06');
+        } else {
+          showToast(`Berhasil masuk sebagai ${userName}! Status dan ulasan Anda sudah aktif.`);
+        }
       }
 
       function openOnboardingModal() {
@@ -1068,7 +1099,16 @@
         }
       }
 
+      function canAccessAdminQueue() {
+        return Boolean(currentUser && currentUser.role === 'ADMIN');
+      }
+
       function switchView(viewId) {
+        if (viewId === 'viewAdminQueue' && !canAccessAdminQueue()) {
+          openAuthModal('Hanya akun admin yang dapat membuka antrean admin. Silakan masuk dengan akun admin terlebih dahulu.');
+          return;
+        }
+
         currentActiveView = viewId;
         const views = ['viewMainMap', 'viewFormContribution', 'viewFeedbackResult', 'viewAdminQueue'];
         views.forEach((id) => {
@@ -1175,7 +1215,7 @@
         });
 
         document.getElementById('placeCountText').innerText = `Menampilkan ${visibleCount} tempat nugas terverifikasi`;
-        if (visibleCount === 0) showToast('Tidak ada hasil. Anda dapat menguji layar P05_empty.');
+        if (visibleCount === 0) showToast('Tidak ada hasil. Coba sesuaikan filter atau kata kunci.');
       }
 
       function handleSearch(query) {
@@ -1256,6 +1296,11 @@
       }
 
       function setDevScreen(screen) {
+        if (screen === 'P06' && !canAccessAdminQueue()) {
+          openAuthModal('Hanya akun admin yang dapat membuka panel admin.');
+          return;
+        }
+
         currentDevScreen = screen;
         const buttons = { MAIN: 'btnDevScreenMain', P04: 'btnDevScreenP04', P05: 'btnDevScreenP05', P06: 'btnDevScreenP06' };
 
@@ -1408,7 +1453,17 @@
         }, 3500);
       }
 
-      window.addEventListener('DOMContentLoaded', init);
+      function syncDevSwitcherVisibility() {
+        const devSwitcher = document.getElementById('devStateSwitcher');
+        if (!devSwitcher) return;
+        const shouldShow = new URLSearchParams(window.location.search).get('dev') === '1';
+        devSwitcher.classList.toggle('hidden', !shouldShow);
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        syncDevSwitcherVisibility();
+        init();
+      });
     </script>
   </body>
 </html>
