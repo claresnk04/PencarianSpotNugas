@@ -1,95 +1,1414 @@
 <!DOCTYPE html>
 <html lang="id">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SNIJ Navigator | Home</title>
-    <link rel="stylesheet" href="../css/styles.css" />
+    <meta name="shell-type" content="web_standard" />
+    <title>SNIJ Navigator - Sistem Navigasi &amp; Kontribusi Tempat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+    <style>
+      @layer base {
+        html, body { margin: 0; padding: 0; }
+        body { overscroll-behavior: none; }
+        main > :first-child { margin-top: 0 !important; }
+        main > :last-child { margin-bottom: 0 !important; }
+      }
+      ::-webkit-scrollbar { display: none; }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "outline-variant": "#c5c5d3",
+              "on-secondary-fixed-variant": "#003ea8",
+              "primary-container": "#1e3a8a",
+              surface: "#faf8ff",
+              "tertiary-container": "#004942",
+              "tertiary-fixed": "#89f5e7",
+              "on-surface-variant": "#444651",
+              "on-secondary-container": "#fefcff",
+              "surface-bright": "#faf8ff",
+              "on-primary-fixed": "#00164e",
+              "tertiary-fixed-dim": "#6bd8cb",
+              "on-primary": "#ffffff",
+              "surface-variant": "#dae2fd",
+              "inverse-primary": "#b6c4ff",
+              "on-primary-fixed-variant": "#264191",
+              "on-tertiary": "#ffffff",
+              "secondary-fixed-dim": "#b4c5ff",
+              "on-primary-container": "#90a8ff",
+              "on-tertiary-fixed-variant": "#005049",
+              "surface-container-low": "#f2f3ff",
+              "on-error-container": "#93000a",
+              "surface-container-highest": "#dae2fd",
+              secondary: "#0051d5",
+              "on-error": "#ffffff",
+              "inverse-on-surface": "#eef0ff",
+              "error-container": "#ffdad6",
+              "surface-container-lowest": "#ffffff",
+              "surface-container": "#eaedff",
+              "surface-dim": "#d2d9f4",
+              "surface-tint": "#4059aa",
+              tertiary: "#00312c",
+              "on-tertiary-fixed": "#00201d",
+              error: "#ba1a1a",
+              "on-surface": "#131b2e",
+              "secondary-fixed": "#dbe1ff",
+              "inverse-surface": "#283044",
+              primary: "#00236f",
+              "surface-container-high": "#e2e7ff",
+              "primary-fixed-dim": "#b6c4ff",
+              "secondary-container": "#316bf3",
+              "on-secondary-fixed": "#00174b",
+              outline: "#757682",
+              "on-secondary": "#ffffff",
+              "on-background": "#131b2e",
+              "on-tertiary-container": "#4ebdb0",
+              background: "#faf8ff",
+              "primary-fixed": "#dce1ff"
+            },
+            borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+            spacing: {
+              "gutter-desktop": "2rem",
+              gutter: "1rem",
+              "space-2xs": "0.25rem",
+              "space-md": "1rem",
+              "space-lg": "1.5rem",
+              "space-sm": "0.75rem",
+              "space-xs": "0.5rem",
+              "margin-tablet": "2rem",
+              "space-xl": "2rem",
+              "space-2xl": "3rem",
+              "margin-desktop": "3rem",
+              "gutter-tablet": "1.5rem",
+              margin: "1rem"
+            },
+            fontFamily: {
+              "body-sm": ["Inter"],
+              "label-lg": ["Inter"],
+              "label-md": ["Inter"],
+              "headline-lg-mobile": ["Plus Jakarta Sans"],
+              "metric-nav": ["Plus Jakarta Sans"],
+              "body-md": ["Inter"],
+              "label-sm": ["Inter"],
+              "title-md": ["Plus Jakarta Sans"],
+              "headline-sm": ["Plus Jakarta Sans"],
+              "headline-md": ["Plus Jakarta Sans"],
+              "body-lg": ["Inter"],
+              "display-lg": ["Plus Jakarta Sans"],
+              "headline-lg": ["Plus Jakarta Sans"]
+            },
+            fontSize: {
+              "body-sm": ["12px", { lineHeight: "16px", fontWeight: "400" }],
+              "label-lg": ["14px", { lineHeight: "20px", letterSpacing: "0.01em", fontWeight: "600" }],
+              "label-md": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "500" }],
+              "headline-lg-mobile": ["26px", { lineHeight: "34px", letterSpacing: "-0.01em", fontWeight: "700" }],
+              "metric-nav": ["28px", { lineHeight: "32px", letterSpacing: "-0.03em", fontWeight: "800" }],
+              "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+              "label-sm": ["11px", { lineHeight: "14px", letterSpacing: "0.04em", fontWeight: "600" }],
+              "title-md": ["18px", { lineHeight: "24px", fontWeight: "600" }],
+              "headline-sm": ["20px", { lineHeight: "28px", letterSpacing: "-0.005em", fontWeight: "600" }],
+              "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "600" }],
+              "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "display-lg": ["40px", { lineHeight: "48px", letterSpacing: "-0.02em", fontWeight: "700" }],
+              "headline-lg": ["32px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700" }]
+            }
+          }
+        }
+      };
+    </script>
   </head>
-  <body>
-    <header class="topbar">
-      <div class="container navbar">
-        <div class="brand">
-          <div class="brand-mark">S</div>
-          <span>SNIJ Navigator</span>
+  <body class="bg-surface font-body-md text-on-surface antialiased">
+    <header class="fixed left-0 right-0 top-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+      <div class="flex h-16 w-full items-center justify-between gap-space-md px-gutter md:px-gutter-tablet lg:px-gutter-desktop">
+        <div class="flex shrink-0 items-center gap-space-sm">
+          <img alt="SNIJ Brand Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1Xt15D7lLh4Qpgn7ibrjiiqCOyeTyDWV764WfA_RUb2pJJYpC9WJ1x6XC8drQiZ1bQuDr_PQnmUqbNohzqEJSXWRAEkqnAalJlVcu6IWbby0tvSJVXr_lveb-mp3Y_NaokVQfDtx3NAwzJ_ycnakOgtT67QckFrw7NTS6a8-yLOAWMFKgRHayKBHy4oADtugNLMmzEdOVZelXQUC04xZrvQZSB8JivZvG1dBI99chk" />
+          <span class="hidden font-title-md text-title-md tracking-tight text-primary sm:inline-block">SNIJ Navigator</span>
         </div>
-        <nav class="nav">
-          <a href="landing.html">Beranda</a>
-          <a href="login.html">Login</a>
-          <a href="register.html">Register</a>
-          <a href="home.html" class="active">Home</a>
-          <a href="dashboard.html">Dashboard</a>
+
+        <nav class="hidden items-center gap-space-xs xl:flex" data-active-classes="bg-primary-container text-on-primary font-label-lg rounded-lg">
+          <a aria-current="page" class="rounded-lg bg-primary-container px-space-sm py-space-xs font-label-lg text-on-primary" data-path="peta-dan-lokasi" href="#">Peta &amp; Lokasi</a>
+          <a class="rounded-lg px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface" data-path="form-kontribusi-p04" href="#">Form Kontribusi (P04)</a>
+          <a class="rounded-lg px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface" data-path="hasil-dan-status-p05" href="#">Hasil &amp; Status (P05)</a>
+          <a class="rounded-lg px-space-sm py-space-xs font-label-md text-label-md text-on-surface-variant transition-colors hover:bg-surface-container-high hover:text-on-surface" data-path="panel-admin-p06" href="#">Panel Admin (P06)</a>
         </nav>
+
+        <div class="flex shrink-0 items-center gap-space-xs md:gap-space-sm">
+          <a class="inline-flex items-center gap-space-xs rounded-full bg-surface-container-high px-space-sm py-space-xs font-label-sm text-label-sm text-on-surface transition-colors hover:bg-surface-container-highest" data-path="petunjuk-aplikasi" href="#">
+            <span class="material-symbols-outlined text-[16px] text-secondary">help</span>
+            <span class="hidden md:inline">Petunjuk Aplikasi</span>
+          </a>
+          <a class="inline-flex items-center gap-space-xs rounded-full bg-primary px-space-sm py-space-xs font-label-sm text-label-sm text-on-primary transition-colors hover:bg-primary-container" data-path="masuk" href="#">
+            <span class="hidden sm:inline">Tamu / Masuk</span>
+            <span class="sm:hidden">Masuk</span>
+          </a>
+          <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary">
+            <span class="material-symbols-outlined text-[18px] text-on-primary">person</span>
+          </div>
+        </div>
       </div>
+
+      <nav class="flex items-center justify-start gap-space-xs overflow-x-auto bg-surface-container-low px-gutter py-space-xs shadow-[0_1px_4px_rgba(0,0,0,0.03)] xl:hidden" data-active-classes="bg-primary-container text-on-primary font-label-sm rounded-lg">
+        <a aria-current="page" class="whitespace-nowrap rounded-lg bg-primary-container px-space-sm py-space-2xs font-label-sm text-on-primary" data-path="peta-dan-lokasi" href="#">Peta &amp; Lokasi</a>
+        <a class="whitespace-nowrap rounded-lg px-space-sm py-space-2xs font-label-sm text-label-sm text-on-surface-variant transition-colors hover:text-on-surface" data-path="form-kontribusi-p04" href="#">Form Kontribusi (P04)</a>
+        <a class="whitespace-nowrap rounded-lg px-space-sm py-space-2xs font-label-sm text-label-sm text-on-surface-variant transition-colors hover:text-on-surface" data-path="hasil-dan-status-p05" href="#">Hasil &amp; Status (P05)</a>
+        <a class="whitespace-nowrap rounded-lg px-space-sm py-space-2xs font-label-sm text-label-sm text-on-surface-variant transition-colors hover:text-on-surface" data-path="panel-admin-p06" href="#">Panel Admin (P06)</a>
+      </nav>
     </header>
 
-    <main class="container page-shell">
-      <aside class="sidebar">
-        <h3>Menu utama</h3>
-        <div class="menu">
-          <button class="active">🏠 Beranda</button>
-          <button>📍 Tempat favorit</button>
-          <button>🧭 Riwayat</button>
-          <button>📌 Kontribusi saya</button>
-          <button>⚙️ Pengaturan</button>
-        </div>
-      </aside>
-
-      <div class="main-panel">
-        <div class="summary-grid">
-          <div class="stat-card"><p>Tempat publik</p><strong id="publicPlaceCount">--</strong></div>
-          <div class="stat-card"><p>Colokan rata-rata</p><strong id="avgOutlet">--</strong></div>
-          <div class="stat-card"><p>Suasana tenang</p><strong id="quietCount">--</strong></div>
-          <div class="stat-card"><p>Status</p><strong id="sessionRole">USER</strong></div>
-        </div>
-
-        <div class="card-grid">
-          <div class="panel">
-            <div class="section-header" style="margin-bottom:16px;">
-              <h3 style="margin:0;">Ajukan tempat baru</h3>
-            </div>
-            <form id="contributionForm">
-              <div class="field">
-                <label for="contributionName">Nama tempat</label>
-                <input id="contributionName" type="text" placeholder="Contoh: Cafe Nusantara" required />
-              </div>
-              <div class="field">
-                <label for="contributionAddress">Alamat</label>
-                <input id="contributionAddress" type="text" placeholder="Alamat lengkap" required />
-              </div>
-              <div class="field">
-                <label for="contributionColokan">Persentase colokan</label>
-                <input id="contributionColokan" type="number" min="0" max="100" value="70" required />
-              </div>
-              <div class="field">
-                <label for="contributionNoise">Tingkat kebisingan</label>
-                <select id="contributionNoise">
-                  <option value="Hening">Hening</option>
-                  <option value="Sedang" selected>Sedang</option>
-                  <option value="Ramai">Ramai</option>
-                </select>
-              </div>
-              <button class="btn btn-primary" type="submit" style="width:100%;">Kirim kontribusi</button>
-            </form>
+    <main class="min-h-[calc(100vh-80px)] w-full bg-surface pt-16">
+      <div class="flex w-full flex-col">
+        <div class="sticky top-0 z-40 flex w-full flex-wrap items-center justify-between bg-primary px-gutter py-2 text-on-primary shadow-sm" id="stateBanner">
+          <div class="flex items-center gap-space-sm">
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-secondary px-2.5 py-0.5 font-label-sm text-label-sm tracking-wide text-on-secondary">
+              <span class="h-2 w-2 animate-ping rounded-full bg-tertiary-fixed"></span>
+              <span id="currentStatusBadge">MODUL 10 : PETA_UTAMA</span>
+            </span>
+            <span class="hidden font-body-sm text-body-sm text-surface-container-high md:inline">Lampiran 5A Matriks Pengujian 12 UI States</span>
           </div>
 
-          <div class="panel">
-            <div class="section-header" style="margin-bottom:16px;">
-              <h3 style="margin:0;">Daftar tempat publik</h3>
+          <div class="flex items-center gap-space-md font-label-sm text-label-sm">
+            <div class="flex items-center gap-2">
+              <span class="font-medium text-surface-variant">Sesi Pengguna:</span>
+              <button class="flex items-center gap-1 rounded bg-surface-container-lowest px-2.5 py-1 font-label-sm text-primary transition-all hover:bg-surface-container" id="toggleUserSessionBtn" onclick="toggleUserSession()">
+                <span class="material-symbols-outlined text-[15px]" id="userStatusIcon">person_off</span>
+                <span id="userStatusText">Tamu (Belum Login)</span>
+              </button>
             </div>
-            <div id="placesList"></div>
+            <button class="flex items-center gap-1 text-tertiary-fixed underline hover:text-white" onclick="openOnboardingModal()">
+              <span class="material-symbols-outlined text-[16px]">info</span>
+              Petunjuk
+            </button>
+          </div>
+        </div>
+
+        <div class="w-full flex-1">
+          <div class="flex w-full flex-1 flex-col" id="viewMainMap">
+            <section class="w-full bg-surface-container-lowest px-gutter py-4 shadow-sm md:px-gutter-tablet lg:px-gutter-desktop">
+              <div class="mx-auto flex max-w-7xl flex-col gap-3">
+                <div class="flex flex-col items-center justify-between gap-3 md:flex-row">
+                  <div class="relative w-full md:max-w-xl">
+                    <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline">search</span>
+                    <input class="h-11 w-full rounded-lg bg-surface-container-low pl-11 pr-10 font-body-md text-body-md text-on-surface transition-all placeholder:text-outline focus:bg-surface-container-lowest focus:outline-none" id="searchInput" oninput="handleSearch(this.value)" placeholder="Cari nama cafe, coworking, perpustakaan, atau jalan..." type="text" />
+                    <button class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface" onclick="clearSearch()">
+                      <span class="material-symbols-outlined text-[18px]">cancel</span>
+                    </button>
+                  </div>
+
+                  <div class="flex w-full items-center justify-end gap-2.5 md:w-auto">
+                    <button class="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-tertiary-container px-4 font-label-lg text-label-lg text-on-tertiary shadow-sm transition-colors hover:bg-tertiary md:flex-none" onclick="handleContributionAction()">
+                      <span class="material-symbols-outlined text-[20px] text-tertiary-fixed">add_location_alt</span>
+                      <span>+ Tambah Tempat (P04)</span>
+                    </button>
+                    <button class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-surface-container-high px-3.5 py-2 font-label-md text-label-md text-primary transition-colors hover:bg-surface-container-highest" onclick="switchView('viewAdminQueue')">
+                      <span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
+                      <span class="hidden sm:inline">Panel Admin</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2 overflow-x-auto pb-1 pt-1">
+                  <span class="mr-1 flex items-center gap-1 font-label-sm text-label-sm text-outline">
+                    <span class="material-symbols-outlined text-[16px]">tune</span> Filter Cepat:
+                  </span>
+
+                  <div class="inline-flex rounded-full bg-surface-container-low p-0.5">
+                    <button class="filter-outlet-btn rounded-full bg-secondary px-3 py-1 font-label-sm text-label-sm text-on-secondary" data-val="0" onclick="setOutletFilter(0)">Semua</button>
+                    <button class="filter-outlet-btn rounded-full px-3 py-1 font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface" data-val="1" onclick="setOutletFilter(1)">⚡ 1+ Colokan</button>
+                    <button class="filter-outlet-btn rounded-full px-3 py-1 font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface" data-val="3" onclick="setOutletFilter(3)">⚡ 3+ Colokan</button>
+                    <button class="filter-outlet-btn rounded-full px-3 py-1 font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface" data-val="5" onclick="setOutletFilter(5)">⚡ 5+ Colokan</button>
+                  </div>
+
+                  <button class="inline-flex items-center gap-1.5 rounded-full bg-surface-container-low px-3 py-1.5 font-label-sm text-label-sm text-on-surface-variant transition-colors hover:bg-surface-container" id="chipWifi" onclick="toggleFeatureFilter('fastWifi')">
+                    <span class="material-symbols-outlined text-[16px]">wifi</span> WiFi Cepat
+                  </button>
+                  <button class="inline-flex items-center gap-1.5 rounded-full bg-surface-container-low px-3 py-1.5 font-label-sm text-label-sm text-on-surface-variant transition-colors hover:bg-surface-container" id="chipAc" onclick="toggleFeatureFilter('hasAc')">
+                    <span class="material-symbols-outlined text-[16px]">ac_unit</span> Full AC
+                  </button>
+                  <button class="inline-flex items-center gap-1.5 rounded-full bg-surface-container-low px-3 py-1.5 font-label-sm text-label-sm text-on-surface-variant transition-colors hover:bg-surface-container" id="chip24h" onclick="toggleFeatureFilter('open24h')">
+                    <span class="material-symbols-outlined text-[16px]">schedule</span> Buka 24 Jam
+                  </button>
+                  <button class="ml-auto cursor-pointer text-label-sm font-label-sm text-secondary underline hover:text-primary" onclick="resetAllFilters()">Reset Filter</button>
+                </div>
+              </div>
+            </section>
+
+            <section class="grid min-h-[calc(100vh-210px)] w-full flex-1 grid-cols-1 overflow-hidden lg:grid-cols-12">
+              <div class="max-h-[calc(100vh-210px)] space-y-4 overflow-y-auto bg-surface p-4 md:p-6 lg:col-span-5 xl:col-span-5">
+                <div class="flex items-center justify-between pb-2">
+                  <div>
+                    <h2 class="font-headline-sm text-headline-sm text-primary">Daftar Tempat Tersedia</h2>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant" id="placeCountText">Menampilkan 4 tempat nugas terverifikasi</p>
+                  </div>
+                  <span class="flex items-center gap-1 rounded bg-tertiary-fixed px-2 py-0.5 text-[10px] font-label-sm text-on-tertiary-fixed">
+                    <span class="material-symbols-outlined text-[14px]">verified</span> Terverifikasi SNIJ
+                  </span>
+                </div>
+
+                <div class="space-y-3.5" id="placesContainer">
+                  <div class="place-card group cursor-pointer rounded-xl bg-surface-container-lowest p-4 shadow-sm transition-all hover:shadow-md" onclick="focusMapMarker('Kopi Nugas Kemang', -6.2738, 106.8152)">
+                    <div class="flex gap-3.5">
+                      <div class="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-surface-container">
+                        <img class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFQu4uh9N6dVo4pLI1wqu3Je7ldWi8anBEJHcfkkv4MVx8XT6t_sz2PuOM2E9sGQZhRaN37fRXUKQgKAS5JjMO3XOKxg8BksFOuXVs3v5u0FPiRzgoncWD1MMPs6YHEGb8tK4-WMjMJvC_8ZxGL5boSsMiOdcwXS4kmUUi6hvj0cjWLfiY0IUWZikzgqI-n9E8Y9PJr2Y1upUQVBtrB-i3MI9Fk_Q0yDf1fGeEM0g" />
+                        <span class="absolute bottom-1 right-1 rounded bg-primary/80 px-1 text-[10px] font-label-sm text-on-primary backdrop-blur-sm">Kemang</span>
+                      </div>
+                      <div class="min-w-0 flex-1">
+                        <div class="flex items-start justify-between gap-1">
+                          <h3 class="truncate font-title-md text-title-md text-on-surface">Kopi Nugas Kemang</h3>
+                          <button class="p-1 text-outline transition-colors hover:text-error" onclick="handleSaveFavorite(event, 'Kopi Nugas Kemang')" title="Simpan ke Favorit">
+                            <span class="material-symbols-outlined text-[20px]">bookmark_border</span>
+                          </button>
+                        </div>
+                        <p class="mt-0.5 flex items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
+                          <span class="material-symbols-outlined text-[14px] text-outline">location_on</span> Jl. Kemang Timur No. 42, Jaksel
+                        </p>
+                        <div class="mt-2 flex flex-wrap gap-1.5">
+                          <span class="inline-flex items-center gap-1 rounded bg-tertiary/10 px-2 py-0.5 font-label-sm text-label-sm font-semibold text-tertiary-container"><span class="material-symbols-outlined text-[13px] text-tertiary-container">power</span> 8 Colokan Aktif</span>
+                          <span class="inline-flex items-center gap-1 rounded bg-secondary-fixed px-2 py-0.5 font-label-sm text-label-sm text-on-secondary-fixed"><span class="material-symbols-outlined text-[13px]">wifi</span> 120 Mbps</span>
+                          <span class="rounded bg-surface-container-high px-1.5 py-0.5 text-[11px] text-on-surface-variant">AC Dingin</span>
+                        </div>
+                        <div class="mt-3 flex items-center justify-between pt-2">
+                          <div class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[16px] text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="font-label-sm text-label-sm font-bold text-on-surface">4.8</span>
+                            <span class="text-xs text-outline">(46 ulasan)</span>
+                          </div>
+                          <button class="flex items-center gap-0.5 font-label-sm text-label-sm text-secondary hover:text-primary hover:underline" onclick="handleWriteReview(event, 'Kopi Nugas Kemang')">
+                            <span class="material-symbols-outlined text-[14px]">edit_note</span> Tulis Ulasan
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="place-card group cursor-pointer rounded-xl bg-surface-container-lowest p-4 shadow-sm transition-all hover:shadow-md" onclick="focusMapMarker('Ruang Kreatif Sabang', -6.1872, 106.8249)">
+                    <div class="flex gap-3.5">
+                      <div class="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-surface-container">
+                        <img class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqdTliEBxZOs7NicZ5P-ncB58H-2RSPq4RVnr7-f5Wcfcdo46IxnFo9Wam30c6hVSulYEui4uplaZkT5EdsIwp37Vz7t0M7j6nWLQWJB6ib9kXij-t8gBrLv-JvMIDmHcJ_IQtetKs6doqNDoCz3VynfpH544c5SidJsLNNUgw7KfLVtbe6wqy-9IkIBwQnppRdNJhYXqcv8YxAprAOl2o1SbaHkbOzg3oYD1PQgo" />
+                        <span class="absolute bottom-1 right-1 rounded bg-primary/80 px-1 text-[10px] font-label-sm text-on-primary backdrop-blur-sm">Menteng</span>
+                      </div>
+                      <div class="min-w-0 flex-1">
+                        <div class="flex items-start justify-between gap-1">
+                          <h3 class="truncate font-title-md text-title-md text-on-surface">Ruang Kreatif Sabang</h3>
+                          <button class="p-1 text-outline transition-colors hover:text-error" onclick="handleSaveFavorite(event, 'Ruang Kreatif Sabang')" title="Simpan ke Favorit">
+                            <span class="material-symbols-outlined text-[20px]">bookmark_border</span>
+                          </button>
+                        </div>
+                        <p class="mt-0.5 flex items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
+                          <span class="material-symbols-outlined text-[14px] text-outline">location_on</span> Jl. H. Agus Salim No. 18, Jakpus
+                        </p>
+                        <div class="mt-2 flex flex-wrap gap-1.5">
+                          <span class="inline-flex items-center gap-1 rounded bg-tertiary/10 px-2 py-0.5 font-label-sm text-label-sm font-semibold text-tertiary-container"><span class="material-symbols-outlined text-[13px] text-tertiary-container">power</span> 14 Colokan Meja</span>
+                          <span class="inline-flex items-center gap-1 rounded bg-secondary-fixed px-2 py-0.5 font-label-sm text-label-sm text-on-secondary-fixed"><span class="material-symbols-outlined text-[13px]">wifi</span> 250 Mbps</span>
+                          <span class="rounded bg-tertiary-fixed px-1.5 py-0.5 text-[11px] font-medium text-on-tertiary-fixed">Buka 24 Jam</span>
+                        </div>
+                        <div class="mt-3 flex items-center justify-between pt-2">
+                          <div class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[16px] text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="font-label-sm text-label-sm font-bold text-on-surface">4.9</span>
+                            <span class="text-xs text-outline">(82 ulasan)</span>
+                          </div>
+                          <button class="flex items-center gap-0.5 font-label-sm text-label-sm text-secondary hover:text-primary hover:underline" onclick="handleWriteReview(event, 'Ruang Kreatif Sabang')">
+                            <span class="material-symbols-outlined text-[14px]">edit_note</span> Tulis Ulasan
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="place-card group cursor-pointer rounded-xl bg-surface-container-lowest p-4 shadow-sm transition-all hover:shadow-md" onclick="focusMapMarker('WorkHub Dago Corner', -6.8858, 107.6133)">
+                    <div class="flex gap-3.5">
+                      <div class="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-surface-container">
+                        <img class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBaTprkI5HYUOxJa9HVmGZIt2FhukQAjjFfSVYCLyX2YNDuTDZDWqA0PPzvAjtUEAsDEWVlcdiOrnwCJxnvzbvHarx9T8U_wPd4o0jQNTXl_CP5ngbvX1tClPp6gY0WOS00WihQlmzCH3R748FDa3hJjVJZjeEeHhxAAHLwjeChVbf-yF9hlhkNB0sSZmZZmK2SZwnjJtsqBe45Vr0lQQ1eJqLy7WACgihpN0qVz4" />
+                        <span class="absolute bottom-1 right-1 rounded bg-primary/80 px-1 text-[10px] font-label-sm text-on-primary backdrop-blur-sm">Bandung</span>
+                      </div>
+                      <div class="min-w-0 flex-1">
+                        <div class="flex items-start justify-between gap-1">
+                          <h3 class="truncate font-title-md text-title-md text-on-surface">WorkHub Dago Corner</h3>
+                          <button class="p-1 text-outline transition-colors hover:text-error" onclick="handleSaveFavorite(event, 'WorkHub Dago Corner')" title="Simpan ke Favorit">
+                            <span class="material-symbols-outlined text-[20px]">bookmark_border</span>
+                          </button>
+                        </div>
+                        <p class="mt-0.5 flex items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
+                          <span class="material-symbols-outlined text-[14px] text-outline">location_on</span> Jl. Ir. H. Djuanda No. 102, Bandung
+                        </p>
+                        <div class="mt-2 flex flex-wrap gap-1.5">
+                          <span class="inline-flex items-center gap-1 rounded bg-tertiary/10 px-2 py-0.5 font-label-sm text-label-sm font-semibold text-tertiary-container"><span class="material-symbols-outlined text-[13px] text-tertiary-container">power</span> 6 Colokan Tiang</span>
+                          <span class="inline-flex items-center gap-1 rounded bg-secondary-fixed px-2 py-0.5 font-label-sm text-label-sm text-on-secondary-fixed"><span class="material-symbols-outlined text-[13px]">wifi</span> 80 Mbps</span>
+                          <span class="rounded bg-surface-container-high px-1.5 py-0.5 text-[11px] text-on-surface-variant">Musholla &amp; Parkir</span>
+                        </div>
+                        <div class="mt-3 flex items-center justify-between pt-2">
+                          <div class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[16px] text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="font-label-sm text-label-sm font-bold text-on-surface">4.7</span>
+                            <span class="text-xs text-outline">(31 ulasan)</span>
+                          </div>
+                          <button class="flex items-center gap-0.5 font-label-sm text-label-sm text-secondary hover:text-primary hover:underline" onclick="handleWriteReview(event, 'WorkHub Dago Corner')">
+                            <span class="material-symbols-outlined text-[14px]">edit_note</span> Tulis Ulasan
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="place-card group cursor-pointer rounded-xl bg-surface-container-lowest p-4 shadow-sm transition-all hover:shadow-md" onclick="focusMapMarker('Kolektif Coffee & Study', -6.2115, 106.8438)">
+                    <div class="flex gap-3.5">
+                      <div class="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-surface-container">
+                        <img class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeEiij8EjahWyznLMNSKrn2mxcFN-UACGwfzMmOwq-0PoS05eFadEt3fRV9ZyX_UfIhD3bkD8D48_UMQwOksa6aaO1VV6G6Irsp2jVxuBnhX9iuOwWo_Z5GxXIh7fxjacxsG0nU8rYC-xHIvDZd17boRHMHj_H1-dkl8C1FPWpTm6gJ4_nVEGML2I9kkVUWt7pdEZJzO6qwb-rNB46KUGiXqS_Fya1xLvSQERmrlA" />
+                        <span class="absolute bottom-1 right-1 rounded bg-primary/80 px-1 text-[10px] font-label-sm text-on-primary backdrop-blur-sm">Tebet</span>
+                      </div>
+                      <div class="min-w-0 flex-1">
+                        <div class="flex items-start justify-between gap-1">
+                          <h3 class="truncate font-title-md text-title-md text-on-surface">Kolektif Coffee &amp; Study</h3>
+                          <button class="p-1 text-outline transition-colors hover:text-error" onclick="handleSaveFavorite(event, 'Kolektif Coffee & Study')" title="Simpan ke Favorit">
+                            <span class="material-symbols-outlined text-[20px]">bookmark_border</span>
+                          </button>
+                        </div>
+                        <p class="mt-0.5 flex items-center gap-1 font-body-sm text-body-sm text-on-surface-variant">
+                          <span class="material-symbols-outlined text-[14px] text-outline">location_on</span> Jl. Tebet Barat Dalam VII No. 3, Jaksel
+                        </p>
+                        <div class="mt-2 flex flex-wrap gap-1.5">
+                          <span class="inline-flex items-center gap-1 rounded bg-tertiary/10 px-2 py-0.5 font-label-sm text-label-sm font-semibold text-tertiary-container"><span class="material-symbols-outlined text-[13px] text-tertiary-container">power</span> 12 Colokan Pod</span>
+                          <span class="inline-flex items-center gap-1 rounded bg-secondary-fixed px-2 py-0.5 font-label-sm text-label-sm text-on-secondary-fixed"><span class="material-symbols-outlined text-[13px]">wifi</span> 100 Mbps</span>
+                          <span class="rounded bg-surface-container-high px-1.5 py-0.5 text-[11px] text-on-surface-variant">Zona Hening</span>
+                        </div>
+                        <div class="mt-3 flex items-center justify-between pt-2">
+                          <div class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[16px] text-amber-500" style="font-variation-settings: 'FILL' 1;">star</span>
+                            <span class="font-label-sm text-label-sm font-bold text-on-surface">4.6</span>
+                            <span class="text-xs text-outline">(19 ulasan)</span>
+                          </div>
+                          <button class="flex items-center gap-0.5 font-label-sm text-label-sm text-secondary hover:text-primary hover:underline" onclick="handleWriteReview(event, 'Kolektif Coffee & Study')">
+                            <span class="material-symbols-outlined text-[14px]">edit_note</span> Tulis Ulasan
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="relative min-h-[420px] bg-surface-container-high lg:col-span-7 xl:col-span-7">
+                <div class="absolute inset-0 bg-cover bg-center" data-location="Jakarta, Indonesia" style="background-image: linear-gradient(180deg, rgba(17,24,39,0.15), rgba(17,24,39,0.35)), url('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=1200&q=80');"></div>
+                <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-primary/10"></div>
+
+                <div class="absolute inset-0 pointer-events-none">
+                  <div class="absolute left-[44%] top-[48%] -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-transform hover:scale-110" onclick="showMapPopup('Kopi Nugas Kemang', '8 Colokan Aktif', 'Jl. Kemang Timur 42', '120 Mbps')">
+                    <div class="relative flex items-center justify-center">
+                      <span class="absolute h-8 w-8 rounded-full bg-tertiary-fixed opacity-75 animate-ping"></span>
+                      <div class="flex h-9 w-9 items-center justify-center rounded-full bg-tertiary-container text-tertiary-fixed shadow-lg">
+                        <span class="material-symbols-outlined text-[20px]">bolt</span>
+                      </div>
+                    </div>
+                    <div class="mt-1 whitespace-nowrap rounded bg-surface-container-lowest px-2 py-0.5 text-center text-[11px] font-label-sm text-primary shadow">Kopi Nugas (8 ⚡)</div>
+                  </div>
+
+                  <div class="absolute left-[58%] top-[28%] -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-transform hover:scale-110" onclick="showMapPopup('Ruang Kreatif Sabang', '14 Colokan Meja', 'Jl. H. Agus Salim 18', '250 Mbps')">
+                    <div class="relative flex items-center justify-center">
+                      <span class="absolute h-8 w-8 rounded-full bg-secondary-fixed opacity-75 animate-ping"></span>
+                      <div class="flex h-9 w-9 items-center justify-center rounded-full bg-secondary text-on-secondary shadow-lg">
+                        <span class="material-symbols-outlined text-[20px]">power</span>
+                      </div>
+                    </div>
+                    <div class="mt-1 whitespace-nowrap rounded bg-surface-container-lowest px-2 py-0.5 text-center text-[11px] font-label-sm text-primary shadow">Ruang Sabang (14 ⚡)</div>
+                  </div>
+
+                  <div class="absolute left-[62%] top-[64%] -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-transform hover:scale-110" onclick="showMapPopup('Kolektif Coffee & Study', '12 Colokan Pod', 'Jl. Tebet Barat Dalam VII', '100 Mbps')">
+                    <div class="flex h-8 w-8 items-center justify-center rounded-full bg-tertiary-container text-tertiary-fixed shadow-lg">
+                      <span class="material-symbols-outlined text-[18px]">bolt</span>
+                    </div>
+                    <div class="mt-1 whitespace-nowrap rounded bg-surface-container-lowest px-1.5 py-0.5 text-center text-[10px] font-label-sm text-primary shadow">Kolektif Study (12 ⚡)</div>
+                  </div>
+                </div>
+
+                <div class="absolute bottom-5 left-5 right-5 z-20 rounded-xl bg-surface-container-lowest/95 p-4 shadow-xl backdrop-blur-md sm:left-auto sm:right-5 sm:w-80" id="mapPopupCard">
+                  <div class="flex items-start justify-between">
+                    <div class="flex items-center gap-2">
+                      <span class="h-2.5 w-2.5 rounded-full bg-tertiary-fixed animate-pulse"></span>
+                      <span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Info Terpilih</span>
+                    </div>
+                    <button class="text-outline hover:text-on-surface" onclick="closeMapPopup()">
+                      <span class="material-symbols-outlined text-[18px]">close</span>
+                    </button>
+                  </div>
+                  <h4 class="mt-1 font-headline-sm text-headline-sm text-primary" id="popupTitle">Kopi Nugas Kemang</h4>
+                  <p class="mt-0.5 font-body-sm text-body-sm text-on-surface-variant" id="popupAddress">Jl. Kemang Timur No. 42, Jaksel</p>
+                  <div class="mt-3 flex items-center gap-2 pt-2">
+                    <span class="inline-flex items-center gap-1 rounded bg-tertiary-container px-2 py-1 font-label-sm text-label-sm font-semibold text-tertiary-fixed" id="popupOutlet"><span class="material-symbols-outlined text-[14px]">bolt</span> 8 Colokan Aktif</span>
+                    <span class="inline-flex items-center gap-1 rounded bg-secondary-fixed px-2 py-1 font-label-sm text-label-sm text-on-secondary-fixed" id="popupWifi"><span class="material-symbols-outlined text-[14px]">wifi</span> 120 Mbps</span>
+                  </div>
+                  <div class="mt-3 flex gap-2">
+                    <button class="flex flex-1 items-center justify-center gap-1 rounded-lg bg-primary px-3 py-2 font-label-sm text-label-sm text-on-primary transition-colors hover:bg-primary-container" onclick="simulateNavigateRoute()">
+                      <span class="material-symbols-outlined text-[16px]">navigation</span> Mulai Rute
+                    </button>
+                    <button class="rounded-lg bg-surface-container-high px-3 py-2 font-label-sm text-label-sm text-primary hover:bg-surface-container-highest" onclick="handleWriteReview(event, document.getElementById('popupTitle').innerText)">Ulas</button>
+                  </div>
+                </div>
+
+                <div class="absolute right-5 top-5 z-20 flex flex-col gap-2">
+                  <button class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-container-lowest text-on-surface shadow-md transition-colors hover:bg-surface-container" onclick="showToast('Zoom diperbesar')" title="Zoom In">
+                    <span class="material-symbols-outlined text-[20px]">add</span>
+                  </button>
+                  <button class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-container-lowest text-on-surface shadow-md transition-colors hover:bg-surface-container" onclick="showToast('Zoom diperkecil')" title="Zoom Out">
+                    <span class="material-symbols-outlined text-[20px]">remove</span>
+                  </button>
+                  <button class="flex h-10 w-10 items-center justify-center rounded-lg bg-surface-container-lowest text-secondary shadow-md transition-colors hover:bg-surface-container" onclick="showToast('Mendeteksi GPS Lokasi Anda...')" title="Lokasi Saya">
+                    <span class="material-symbols-outlined text-[20px]">my_location</span>
+                  </button>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <div class="hidden w-full flex-1 px-gutter py-8 md:px-gutter-tablet" id="viewFormContribution">
+            <div class="mx-auto max-w-4xl">
+              <div class="flex items-center justify-between pb-6">
+                <div>
+                  <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Layar Pengujian P04 (SCR-05)</span>
+                  <h1 class="font-headline-lg text-headline-lg text-primary">Form Kontribusi Tempat Baru</h1>
+                  <p class="mt-1 font-body-md text-body-md text-on-surface-variant">Bantu komunitas dengan menambahkan titik nugas dan detail stopkontak.</p>
+                </div>
+                <button class="inline-flex items-center gap-1.5 rounded-lg bg-surface-container px-3 py-2 font-label-md text-label-md text-on-surface transition-colors hover:bg-surface-container-high" onclick="switchView('viewMainMap')">
+                  <span class="material-symbols-outlined text-[18px]">arrow_back</span> Kembali
+                </button>
+              </div>
+
+              <div class="hidden mb-6 rounded-xl bg-error-container p-4 text-on-error-container shadow-sm" id="p04ErrorBanner">
+                <div class="flex items-start gap-3">
+                  <span class="material-symbols-outlined shrink-0 text-[24px] text-error">error</span>
+                  <div class="flex-1">
+                    <h4 class="font-label-lg text-label-lg font-bold">Kontribusi belum terkirim. Silakan periksa kembali isian Anda.</h4>
+                    <p class="mt-0.5 font-body-sm text-body-sm">Terdapat kesalahan validasi pada formulir. Data yang telah Anda masukkan tetap tersimpan aman.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="space-y-6 rounded-2xl bg-surface-container-lowest p-6 shadow-sm md:p-8">
+                <div class="space-y-1.5">
+                  <label class="flex items-center justify-between font-label-lg text-label-lg text-on-surface"><span>Nama Lokasi / Tempat *</span><span class="font-body-sm text-body-sm text-outline">Wajib diisi</span></label>
+                  <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline">storefront</span>
+                    <input class="h-12 w-full rounded-lg bg-surface-container-low pl-11 pr-4 font-body-md text-body-md text-on-surface focus:outline-none" id="p04PlaceName" placeholder="Ketik nama tempat..." type="text" value="Kopi Senja Bahagia" />
+                  </div>
+                  <div class="mt-2 hidden rounded-xl bg-surface-container-high p-3.5 text-on-surface shadow-sm" id="p04AutocompleteEmpty">
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-outline">search_off</span>
+                        <span class="font-body-md text-body-md font-medium text-on-surface-variant">Tempat tidak ditemukan dalam database</span>
+                      </div>
+                      <button class="rounded-lg bg-tertiary-container px-3 py-1.5 font-label-sm text-label-sm text-on-tertiary transition-colors hover:bg-tertiary" onclick="adoptNewPlaceName()">+ Tambahkan sebagai tempat baru</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div class="space-y-1.5">
+                    <label class="font-label-lg text-label-lg text-on-surface">Kategori Fasilitas *</label>
+                    <select class="h-12 w-full rounded-lg bg-surface-container-low px-3.5 font-body-md text-body-md text-on-surface focus:outline-none" id="p04Category">
+                      <option value="cafe">Kedai Kopi / Cafe</option>
+                      <option value="coworking">Coworking Space</option>
+                      <option value="library">Perpustakaan Umum</option>
+                      <option value="resto">Restoran / Eatery</option>
+                    </select>
+                  </div>
+                  <div class="space-y-1.5">
+                    <label class="flex items-center justify-between font-label-lg text-label-lg text-on-surface"><span>Jumlah Colokan Listrik *</span><span class="hidden font-body-sm text-body-sm text-error" id="p04OutletValidationText">Jumlah colokan harus 0 - 100% / angka valid</span></label>
+                    <div class="relative">
+                      <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-outline">electrical_services</span>
+                      <input class="h-12 w-full rounded-lg bg-surface-container-low pl-11 pr-4 font-body-md text-body-md text-on-surface focus:outline-none" id="p04OutletCount" placeholder="Misal: 8" type="number" value="6" />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="space-y-1.5">
+                  <label class="font-label-lg text-label-lg text-on-surface">Alamat Lengkap *</label>
+                  <textarea class="w-full rounded-lg bg-surface-container-low p-3.5 font-body-md text-body-md text-on-surface focus:outline-none" id="p04Address" placeholder="Tuliskan nama jalan, patokan, nomor..." rows="2">Jl. Radio Dalam Raya No. 14, Gandaria Utara, Kebayoran Baru, Jakarta Selatan</textarea>
+                </div>
+
+                <div class="space-y-2">
+                  <div class="flex items-center justify-between">
+                    <label class="font-label-lg text-label-lg text-on-surface">Foto Lokasi &amp; Stopkontak *</label>
+                    <span class="hidden font-body-sm text-body-sm text-error" id="p04PhotoErrorText">Format berkas harus JPG/PNG, ukuran maks 5 MB</span>
+                  </div>
+                  <div class="flex flex-col items-center justify-center rounded-xl bg-surface-container-low p-6 text-center">
+                    <span class="material-symbols-outlined text-[36px] text-secondary">cloud_upload</span>
+                    <p class="mt-2 font-label-lg text-label-lg text-on-surface">Seret foto ke sini atau <button type="button" class="font-semibold text-secondary underline">Pilih Berkas</button></p>
+                    <p class="mt-1 font-body-sm text-body-sm text-outline">Dukung format JPG, JPEG, PNG (Maks 5 MB)</p>
+                    <div class="mt-4 hidden w-full max-w-md" id="p04UploadProgressBar">
+                      <div class="mb-1 flex items-center justify-between font-label-sm text-label-sm text-primary"><span>Mengunggah foto...</span><span>65%</span></div>
+                      <div class="h-2.5 w-full overflow-hidden rounded-full bg-surface-container">
+                        <div class="h-full rounded-full bg-gradient-to-r from-secondary to-tertiary-fixed-dim transition-all duration-300" style="width: 65%;"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="space-y-2">
+                  <label class="font-label-lg text-label-lg text-on-surface">Fasilitas Tambahan</label>
+                  <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    <label class="flex cursor-pointer items-center gap-2 rounded-lg bg-surface-container-low p-3"><input checked class="h-4 w-4 rounded text-tertiary-container" type="checkbox" /><span class="font-body-sm text-body-sm text-on-surface">WiFi Cepat</span></label>
+                    <label class="flex cursor-pointer items-center gap-2 rounded-lg bg-surface-container-low p-3"><input checked class="h-4 w-4 rounded text-tertiary-container" type="checkbox" /><span class="font-body-sm text-body-sm text-on-surface">Full AC</span></label>
+                    <label class="flex cursor-pointer items-center gap-2 rounded-lg bg-surface-container-low p-3"><input class="h-4 w-4 rounded text-tertiary-container" type="checkbox" /><span class="font-body-sm text-body-sm text-on-surface">Buka 24 Jam</span></label>
+                    <label class="flex cursor-pointer items-center gap-2 rounded-lg bg-surface-container-low p-3"><input checked class="h-4 w-4 rounded text-tertiary-container" type="checkbox" /><span class="font-body-sm text-body-sm text-on-surface">Musholla</span></label>
+                  </div>
+                </div>
+
+                <div class="flex flex-col items-center justify-end gap-3 pt-4 sm:flex-row">
+                  <button class="h-12 w-full rounded-lg bg-surface-container px-6 font-label-lg text-label-lg text-on-surface transition-colors hover:bg-surface-container-high sm:w-auto" onclick="switchView('viewMainMap')" type="button">Batalkan</button>
+                  <button class="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-tertiary-container px-8 font-label-lg text-label-lg text-on-tertiary shadow-md transition-all hover:bg-tertiary sm:w-auto" id="p04SubmitBtn" onclick="submitContributionForm()" type="button">
+                    <span class="material-symbols-outlined text-[20px] text-tertiary-fixed">send</span>
+                    <span id="p04SubmitBtnText">Kirim Kontribusi Tempat</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hidden w-full flex-1 px-gutter py-12 md:px-gutter-tablet" id="viewFeedbackResult">
+            <div class="mx-auto flex max-w-3xl flex-col items-center justify-center">
+              <div class="w-full rounded-2xl bg-surface-container-lowest p-8 text-center shadow-md md:p-12">
+                <div id="p05Container">
+                  <div class="space-y-4" id="p05StateSuccess">
+                    <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100">
+                      <span class="material-symbols-outlined text-[48px] text-emerald-600">check_circle</span>
+                    </div>
+                    <h2 class="font-headline-lg text-headline-lg text-primary">Terima kasih! Kontribusi Anda sudah terkirim</h2>
+                    <div class="inline-flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1.5 font-label-sm text-label-sm font-semibold text-amber-900">
+                      <span class="h-2 w-2 animate-pulse rounded-full bg-amber-500"></span>
+                      Status: Menunggu verifikasi
+                    </div>
+                    <p class="mx-auto max-w-lg font-body-md text-body-md text-on-surface-variant">
+                      Kontribusi lokasi <strong class="text-on-surface" id="p05PlaceNameRecorded">Kopi Senja Bahagia</strong> telah tersimpan dalam sistem kami dan sedang ditinjau oleh kurator admin sebelum dipublikasikan.
+                    </p>
+                    <div class="flex flex-wrap items-center justify-center gap-3 pt-6">
+                      <button class="rounded-lg bg-primary px-6 py-3 font-label-md text-label-md text-on-primary transition-colors hover:bg-primary-container" onclick="switchView('viewMainMap')">Kembali ke Peta Utama</button>
+                      <button class="rounded-lg bg-surface-container-high px-6 py-3 font-label-md text-label-md text-primary transition-colors hover:bg-surface-container-highest" onclick="switchView('viewAdminQueue')">Lihat di Antrean Admin (P06)</button>
+                    </div>
+                  </div>
+
+                  <div class="hidden space-y-4" id="p05StateEmpty">
+                    <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-surface-container">
+                      <span class="material-symbols-outlined text-[44px] text-outline">search_off</span>
+                    </div>
+                    <h2 class="font-headline-md text-headline-md text-on-surface">Belum ada tempat yang cocok dengan filter Anda</h2>
+                    <p class="mx-auto max-w-md font-body-md text-body-md text-on-surface-variant">Tidak ditemukan tempat dengan kriteria filter aktif saat ini. Cobalah kurangi batas minimal colokan atau reset parameter pencarian.</p>
+                    <div class="flex flex-wrap items-center justify-center gap-2 py-2">
+                      <span class="rounded-full bg-surface-container-high px-3 py-1 text-xs font-medium">⚡ Colokan 5+</span>
+                      <span class="rounded-full bg-surface-container-high px-3 py-1 text-xs font-medium">📶 WiFi Cepat</span>
+                      <span class="rounded-full bg-surface-container-high px-3 py-1 text-xs font-medium">🕒 Buka 24 Jam</span>
+                    </div>
+                    <div class="flex items-center justify-center gap-3 pt-4">
+                      <button class="rounded-lg bg-secondary px-6 py-3 font-label-md text-label-md text-on-secondary transition-colors hover:bg-primary" onclick="resetAllFiltersAndGoMap()">Reset Filter &amp; Cari Lagi</button>
+                    </div>
+                  </div>
+
+                  <div class="hidden space-y-4" id="p05StateError">
+                    <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-error-container">
+                      <span class="material-symbols-outlined text-[44px] text-error">cloud_off</span>
+                    </div>
+                    <h2 class="font-headline-md text-headline-md text-on-surface">Halaman tidak bisa dimuat</h2>
+                    <p class="mx-auto max-w-md font-body-md text-body-md text-on-surface-variant">[HTTP 404] Data tempat atau hasil filter gagal diambil dari server geospasial SNIJ. Periksa koneksi internet Anda.</p>
+                    <div class="flex items-center justify-center gap-3 pt-4">
+                      <button class="flex items-center gap-2 rounded-lg bg-primary px-6 py-3 font-label-md text-label-md text-on-primary transition-colors hover:bg-primary-container" onclick="retryP05Loading()">
+                        <span class="material-symbols-outlined text-[18px]">refresh</span> Coba Lagi
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="hidden space-y-4 py-8" id="p05StateLoading">
+                    <div class="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+                    <h3 class="font-headline-sm text-headline-sm text-primary">Memuat Data Filter &amp; Status...</h3>
+                    <p class="font-body-sm text-body-sm text-on-surface-variant">Menghubungkan ke server satelit SNIJ...</p>
+                    <div class="pointer-events-none flex items-center justify-center gap-3 pt-4 opacity-50">
+                      <button class="rounded-lg bg-surface-container px-6 py-3 font-label-md text-label-md text-outline" disabled>Reset Filter (Disabled)</button>
+                      <button class="rounded-lg bg-surface-container px-6 py-3 font-label-md text-label-md text-outline" disabled>Kembali ke Peta (Disabled)</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="hidden w-full flex-1 px-gutter py-8 md:px-gutter-tablet lg:px-gutter-desktop" id="viewAdminQueue">
+            <div class="mx-auto max-w-7xl">
+              <div class="flex flex-col justify-between gap-4 pb-6 sm:flex-row sm:items-center">
+                <div>
+                  <span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Layar Pengujian P06 (SCR-08)</span>
+                  <h1 class="font-headline-lg text-headline-lg text-primary">Dashboard Antrean Kurasi Kontribusi</h1>
+                  <p class="mt-1 font-body-md text-body-md text-on-surface-variant">Review kontribusi masuk dari pengguna lapangan sebelum dipublikasikan ke peta publik.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button class="inline-flex items-center gap-1 rounded-lg bg-surface-container px-4 py-2 font-label-md text-label-md text-on-surface transition-colors hover:bg-surface-container-high" onclick="switchView('viewMainMap')">
+                    <span class="material-symbols-outlined text-[18px]">map</span> Lihat Peta
+                  </button>
+                  <button class="inline-flex items-center gap-1 rounded-lg bg-primary px-4 py-2 font-label-md text-label-md text-on-primary transition-colors hover:bg-primary-container" onclick="refreshAdminQueue()">
+                    <span class="material-symbols-outlined text-[18px]">sync</span> Segarkan Antrean
+                  </button>
+                </div>
+              </div>
+
+              <div class="mb-6 hidden rounded-xl bg-error p-4 text-on-error shadow-lg" id="p06ConflictToast">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-[24px]">sync_problem</span>
+                    <div>
+                      <h4 class="font-label-lg text-label-lg font-bold">[HTTP 409 Konflik]: Status sudah berubah</h4>
+                      <p class="font-body-sm text-body-sm opacity-90">Data kontribusi ini telah diperbarui atau diproses oleh kurator admin lain.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-6 hidden rounded-xl bg-tertiary-container p-4 text-on-tertiary shadow-lg" id="p06SuccessToast">
+                <div class="flex items-center justify-between gap-3">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-[24px] text-tertiary-fixed">verified</span>
+                    <div>
+                      <h4 class="font-label-lg text-label-lg font-bold">Kontribusi disetujui!</h4>
+                      <p class="font-body-sm text-body-sm text-tertiary-fixed">Titik lokasi kini telah dipublikasikan dan tampil di peta publik.</p>
+                    </div>
+                  </div>
+                  <button class="text-tertiary-fixed hover:text-white" onclick="document.getElementById('p06SuccessToast').classList.add('hidden')"><span class="material-symbols-outlined text-[20px]">close</span></button>
+                </div>
+              </div>
+
+              <div class="overflow-hidden rounded-2xl bg-surface-container-lowest shadow-sm">
+                <div class="flex flex-wrap items-center justify-between gap-3 bg-surface-container-low p-4">
+                  <div class="flex items-center gap-2">
+                    <span class="font-label-sm text-label-sm font-medium text-on-surface-variant">Filter Status:</span>
+                    <span class="rounded-full bg-amber-100 px-2.5 py-1 font-label-sm text-label-sm font-semibold text-amber-900">Menunggu Verifikasi (3)</span>
+                  </div>
+                  <div class="font-body-sm text-body-sm text-outline">Total 3 pengajuan tertunda</div>
+                </div>
+
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left font-body-sm text-body-sm">
+                    <thead class="bg-surface-container font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">
+                      <tr>
+                        <th class="px-4 py-3.5">Nama Tempat &amp; Alamat</th>
+                        <th class="px-4 py-3.5">Kontributor</th>
+                        <th class="px-4 py-3.5">Detail Fasilitas</th>
+                        <th class="px-4 py-3.5">Status</th>
+                        <th class="px-4 py-3.5 text-right">Aksi Tindakan</th>
+                      </tr>
+                    </thead>
+                    <tbody class="text-on-surface" id="adminTableRows">
+                      <tr class="transition-colors hover:bg-surface-container-low/50" id="adminRow1">
+                        <td class="px-4 py-4"><div class="font-label-lg text-label-lg font-bold text-on-surface">Kopi Senja Bahagia</div><div class="mt-0.5 text-xs text-on-surface-variant">Jl. Radio Dalam Raya No. 14, Jakarta Selatan</div></td>
+                        <td class="px-4 py-4"><div class="font-medium">Budi Santoso</div><div class="text-xs text-outline">Pengguna Terverifikasi</div></td>
+                        <td class="px-4 py-4"><span class="inline-flex items-center gap-1 rounded bg-tertiary/10 px-2 py-0.5 text-xs font-medium text-tertiary-container">⚡ 6 Colokan</span><span class="ml-1 inline-block text-xs text-outline">WiFi, AC</span></td>
+                        <td class="px-4 py-4"><span class="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-900">Menunggu Verifikasi</span></td>
+                        <td class="px-4 py-4 text-right"><div class="inline-flex items-center justify-end gap-2"><button class="flex items-center gap-1 rounded-lg bg-tertiary-container px-3 py-1.5 text-xs font-label-sm text-on-tertiary transition-colors hover:bg-tertiary" onclick="approveQueueItem('adminRow1')"><span class="material-symbols-outlined text-[16px]">check</span> Setujui</button><button class="rounded-lg bg-surface-container-high px-3 py-1.5 text-xs font-label-sm text-on-surface transition-colors hover:bg-error hover:text-white" onclick="rejectQueueItem('adminRow1')">Tolak</button></div></td>
+                      </tr>
+                      <tr class="transition-colors hover:bg-surface-container-low/50" id="adminRow2">
+                        <td class="px-4 py-4"><div class="font-label-lg text-label-lg font-bold text-on-surface">Perpustakaan Mini Cikini</div><div class="mt-0.5 text-xs text-on-surface-variant">Jl. Cikini Raya No. 71, Menteng, Jakpus</div></td>
+                        <td class="px-4 py-4"><div class="font-medium">Siti Aminah</div><div class="text-xs text-outline">Surveyor Komunitas</div></td>
+                        <td class="px-4 py-4"><span class="inline-flex items-center gap-1 rounded bg-tertiary/10 px-2 py-0.5 text-xs font-medium text-tertiary-container">⚡ 10 Colokan</span><span class="ml-1 inline-block text-xs text-outline">WiFi 100Mbps</span></td>
+                        <td class="px-4 py-4"><span class="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-900">Menunggu Verifikasi</span></td>
+                        <td class="px-4 py-4 text-right"><div class="inline-flex items-center justify-end gap-2"><button class="flex items-center gap-1 rounded-lg bg-tertiary-container px-3 py-1.5 text-xs font-label-sm text-on-tertiary transition-colors hover:bg-tertiary" onclick="approveQueueItem('adminRow2')"><span class="material-symbols-outlined text-[16px]">check</span> Setujui</button><button class="rounded-lg bg-surface-container-high px-3 py-1.5 text-xs font-label-sm text-on-surface transition-colors hover:bg-error hover:text-white" onclick="rejectQueueItem('adminRow2')">Tolak</button></div></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="hidden py-16 px-4 text-center" id="p06EmptyStateBox">
+                  <div class="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-surface-container"><span class="material-symbols-outlined text-[36px] text-outline">inbox</span></div>
+                  <h3 class="font-headline-sm text-headline-sm text-on-surface">Belum ada kontribusi berstatus Menunggu verifikasi</h3>
+                  <p class="mx-auto mt-1 max-w-sm font-body-sm text-body-sm text-on-surface-variant">Semua kontribusi tempat telah selesai diproses oleh tim kurator.</p>
+                </div>
+
+                <div class="hidden py-16 px-4 text-center" id="p06ErrorStateBox">
+                  <div class="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-error-container"><span class="material-symbols-outlined text-[36px] text-error">cloud_sync</span></div>
+                  <h3 class="font-headline-sm text-headline-sm text-on-surface">Antrean gagal dimuat</h3>
+                  <p class="mx-auto mt-1 max-w-sm font-body-sm text-body-sm text-on-surface-variant">Terjadi kesalahan pada query basis data antrean admin.</p>
+                  <button class="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-primary px-5 py-2 font-label-sm text-label-sm text-on-primary" onclick="refreshAdminQueue()"><span class="material-symbols-outlined text-[16px]">refresh</span> Coba Muat Ulang</button>
+                </div>
+
+                <div class="hidden space-y-4 p-6" id="p06LoadingSkeleton">
+                  <div class="h-10 w-full animate-pulse rounded-lg bg-surface-container"></div>
+                  <div class="h-14 w-full animate-pulse rounded-lg bg-surface-container-high"></div>
+                  <div class="h-14 w-full animate-pulse rounded-lg bg-surface-container-high"></div>
+                  <div class="h-14 w-full animate-pulse rounded-lg bg-surface-container-high"></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </main>
 
-    <footer class="footer">
-      <div class="container footer-row">
-        <div>© <span id="year"></span> SNIJ Navigator</div>
-        <div>Tempat kerja nyaman untuk komunitas</div>
+    <div class="fixed inset-0 z-50 hidden items-center justify-center bg-on-surface/60 p-4 backdrop-blur-sm" id="authModal">
+      <div class="w-full max-w-md overflow-hidden rounded-2xl bg-surface-container-lowest shadow-2xl transition-all duration-200" id="authModalCard">
+        <div class="flex items-start justify-between bg-surface-container-low p-6">
+          <div class="flex items-center gap-3">
+            <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-on-primary"><span class="material-symbols-outlined text-[24px]">lock</span></div>
+            <div>
+              <h3 class="font-title-md text-title-md text-primary">Autentikasi Pengguna</h3>
+              <p class="font-body-sm text-body-sm text-on-surface-variant">Gerbang Masuk SNIJ Navigator</p>
+            </div>
+          </div>
+          <button class="p-1 text-outline hover:text-on-surface" onclick="closeAuthModal()"><span class="material-symbols-outlined text-[20px]">close</span></button>
+        </div>
+
+        <div class="flex items-start gap-2.5 bg-secondary-fixed/50 p-4">
+          <span class="material-symbols-outlined mt-0.5 shrink-0 text-[20px] text-secondary">info</span>
+          <p class="font-body-sm text-body-sm text-on-secondary-fixed" id="authContextMsg">Masuk untuk berkontribusi menambahkan tempat baru, memberi ulasan, atau menyimpan lokasi favorit Anda.</p>
+        </div>
+
+        <div class="space-y-4 p-6">
+          <div class="flex rounded-lg bg-surface-container p-1">
+            <button class="flex-1 rounded-md bg-surface-container-lowest py-1.5 font-label-md text-label-md text-primary shadow-sm" id="authTabLogin" onclick="switchAuthTab('login')">Masuk</button>
+            <button class="flex-1 rounded-md py-1.5 font-label-md text-label-md text-on-surface-variant" id="authTabRegister" onclick="switchAuthTab('register')">Daftar Akun Baru</button>
+          </div>
+
+          <button class="flex h-11 w-full items-center justify-center gap-3 rounded-lg bg-surface-container-low font-label-md text-label-md text-on-surface shadow-sm transition-colors hover:bg-surface-container" onclick="performSimulatedLogin('Budi Santoso (Google)')">
+            <svg class="h-4 w-4" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" /><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" /><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05" /><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335" /></svg>
+            <span>Lanjutkan dengan Google</span>
+          </button>
+
+          <div class="flex items-center gap-2 my-2">
+            <div class="h-px flex-1 bg-surface-container"></div>
+            <span class="text-xs uppercase text-outline">atau dengan email</span>
+            <div class="h-px flex-1 bg-surface-container"></div>
+          </div>
+
+          <div class="space-y-3">
+            <div class="space-y-1">
+              <label class="font-label-sm text-label-sm text-on-surface">Email</label>
+              <input class="h-11 w-full rounded-lg bg-surface-container-low px-3.5 font-body-sm text-body-sm text-on-surface focus:outline-none" id="authEmail" value="budi.santoso@email.com" type="email" />
+            </div>
+            <div class="space-y-1">
+              <label class="font-label-sm text-label-sm text-on-surface">Kata Sandi</label>
+              <input class="h-11 w-full rounded-lg bg-surface-container-low px-3.5 font-body-sm text-body-sm text-on-surface focus:outline-none" id="authPassword" value="••••••••" type="password" />
+            </div>
+            <button class="mt-2 h-11 w-full rounded-lg bg-primary font-label-lg text-label-lg text-on-primary shadow-md transition-colors hover:bg-primary-container" onclick="performSimulatedLogin('Budi Santoso')">
+              <span id="authSubmitText">Masuk ke Akun</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fixed inset-0 z-50 hidden items-center justify-center bg-on-surface/60 p-4 backdrop-blur-sm" id="onboardingModal">
+      <div class="w-full max-w-lg overflow-hidden rounded-2xl bg-surface-container-lowest p-6 shadow-2xl md:p-8" id="onboardingCard">
+        <div class="flex items-center justify-between pb-4">
+          <span class="font-label-sm text-label-sm font-bold uppercase tracking-wider text-secondary">Panduan Langkah SNIJ</span>
+          <button class="font-label-sm text-label-sm text-outline hover:text-on-surface" onclick="closeOnboardingModal()">Lewati (Skip)</button>
+        </div>
+
+        <div class="py-4" id="onboardingSlides">
+          <div class="onboarding-slide space-y-4 text-center">
+            <div class="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-tertiary/10 text-tertiary-container"><span class="material-symbols-outlined text-[48px]">pin_drop</span></div>
+            <h3 class="font-headline-md text-headline-md text-primary">Cari Tempat &amp; Colokan</h3>
+            <p class="mx-auto max-w-sm font-body-md text-body-md text-on-surface-variant">Temukan lokasi nugas atau kerja dengan filter spesifik stopkontak listrik, kecepatan WiFi, AC, dan jam operasional 24 jam.</p>
+          </div>
+
+          <div class="onboarding-slide hidden space-y-4 text-center">
+            <div class="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-secondary-fixed text-on-secondary-fixed"><span class="material-symbols-outlined text-[48px]">add_a_photo</span></div>
+            <h3 class="font-headline-md text-headline-md text-primary">Bagikan Kontribusi</h3>
+            <p class="mx-auto max-w-sm font-body-md text-body-md text-on-surface-variant">Bantu sesama pengguna lapangan dengan menambahkan lokasi baru, mengunggah foto stopkontak asli, dan detail fasilitas meja.</p>
+          </div>
+
+          <div class="onboarding-slide hidden space-y-4 text-center">
+            <div class="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-emerald-100 text-emerald-800"><span class="material-symbols-outlined text-[48px]">verified_user</span></div>
+            <h3 class="font-headline-md text-headline-md text-primary">Verifikasi Admin</h3>
+            <p class="mx-auto max-w-sm font-body-md text-body-md text-on-surface-variant">Setiap kontribusi yang dikirim akan diverifikasi oleh Admin kurator untuk menjamin akurasi data sebelum tampil secara publik.</p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-6">
+          <div class="flex items-center gap-2">
+            <span class="onboarding-dot h-2.5 w-2.5 rounded-full bg-primary transition-all"></span>
+            <span class="onboarding-dot h-2.5 w-2.5 rounded-full bg-surface-container-high transition-all"></span>
+            <span class="onboarding-dot h-2.5 w-2.5 rounded-full bg-surface-container-high transition-all"></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="hidden rounded-lg bg-surface-container px-4 py-2 font-label-md text-label-md text-on-surface" id="onboardingPrevBtn" onclick="prevOnboardingSlide()">Sebelumnya</button>
+            <button class="rounded-lg bg-primary px-5 py-2 font-label-md text-label-md text-on-primary transition-colors hover:bg-primary-container" id="onboardingNextBtn" onclick="nextOnboardingSlide()">Lanjut</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fixed bottom-4 right-4 z-50 w-80 rounded-2xl bg-primary/95 p-4 text-xs text-on-primary shadow-2xl backdrop-blur-md">
+      <div class="mb-2 flex items-center justify-between pb-2">
+        <div class="flex items-center gap-1.5 font-label-sm font-bold text-tertiary-fixed"><span class="material-symbols-outlined text-[16px]">tune</span><span>Dev State Switcher (Modul 10)</span></div>
+        <span class="rounded bg-surface-container-high/20 px-1.5 py-0.5 font-mono text-[10px] text-surface-container-high">12 States</span>
+      </div>
+      <div class="space-y-2">
+        <div>
+          <label class="mb-1 block font-medium text-surface-variant">Pilih Layar Uji:</label>
+          <div class="grid grid-cols-2 gap-1 font-label-sm">
+            <button class="rounded bg-secondary px-2 py-1.5 font-medium text-white" id="btnDevScreenMain" onclick="setDevScreen('MAIN')">Peta Utama</button>
+            <button class="rounded bg-primary-container px-2 py-1.5 font-medium text-surface-variant" id="btnDevScreenP04" onclick="setDevScreen('P04')">P04 (Form)</button>
+            <button class="rounded bg-primary-container px-2 py-1.5 font-medium text-surface-variant" id="btnDevScreenP05" onclick="setDevScreen('P05')">P05 (Feedback)</button>
+            <button class="rounded bg-primary-container px-2 py-1.5 font-medium text-surface-variant" id="btnDevScreenP06" onclick="setDevScreen('P06')">P06 (Admin)</button>
+          </div>
+        </div>
+        <div>
+          <label class="mb-1 block font-medium text-surface-variant">Pilih UI State (Matriks 5A):</label>
+          <div class="grid grid-cols-4 gap-1 text-center font-label-sm">
+            <button class="rounded bg-surface-container-high/20 py-1 hover:bg-surface-container-high/40" id="btnStateLoading" onclick="applySimulatedState('loading')">Loading</button>
+            <button class="rounded bg-surface-container-high/20 py-1 hover:bg-surface-container-high/40" id="btnStateEmpty" onclick="applySimulatedState('empty')">Empty</button>
+            <button class="rounded bg-surface-container-high/20 py-1 hover:bg-surface-container-high/40" id="btnStateError" onclick="applySimulatedState('error')">Error</button>
+            <button class="rounded bg-surface-container-high/20 py-1 hover:bg-surface-container-high/40" id="btnStateSuccess" onclick="applySimulatedState('success')">Success</button>
+          </div>
+        </div>
+        <div class="flex items-center justify-between pt-2 text-[11px]">
+          <button class="text-tertiary-fixed underline hover:text-white" onclick="toggleUserSession()">Toggle Login/Tamu</button>
+          <button class="text-surface-variant underline hover:text-white" onclick="openOnboardingModal()">Buka Onboarding</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pointer-events-none fixed right-4 top-20 z-50 flex flex-col gap-2" id="toastContainer"></div>
+
+    <footer class="w-full bg-surface-container-low py-space-lg text-on-surface-variant">
+      <div class="flex w-full flex-col items-center justify-between gap-space-sm px-gutter md:flex-row md:px-gutter-tablet lg:px-gutter-desktop">
+        <div class="flex items-center gap-space-xs">
+          <span class="font-label-md text-label-md text-primary">SNIJ Navigator</span>
+          <span>•</span>
+          <span>Sistem Navigasi &amp; Kontribusi Tempat Terpadu</span>
+        </div>
+        <div class="flex items-center gap-space-md">
+          <a class="text-on-surface-variant transition-colors hover:text-on-surface" data-path="petunjuk-aplikasi" href="#">Panduan Pengguna</a>
+          <span class="text-outline-variant">•</span>
+          <span>© 2025 SNIJ Project</span>
+        </div>
       </div>
     </footer>
 
-    <script src="../js/script.js"></script>
+    <script>
+      let currentUser = null;
+      let currentActiveView = 'viewMainMap';
+      let currentDevScreen = 'MAIN';
+      let currentDevState = 'initial';
+      let currentSlide = 0;
+      const totalSlides = 3;
+      let filterMinOutlet = 0;
+      let filterWifi = false;
+      let filterAc = false;
+      let filter24h = false;
+
+      const placesData = [
+        { name: 'Kopi Nugas Kemang', outlets: 8, wifi: true, ac: true, is24h: false },
+        { name: 'Ruang Kreatif Sabang', outlets: 14, wifi: true, ac: true, is24h: true },
+        { name: 'WorkHub Dago Corner', outlets: 6, wifi: true, ac: true, is24h: false },
+        { name: 'Kolektif Coffee & Study', outlets: 12, wifi: true, ac: true, is24h: false }
+      ];
+
+      function init() {
+        updateUserSessionUI();
+        wireHeaderLinks();
+      }
+
+      function wireHeaderLinks() {
+        document.querySelectorAll('nav a, header a').forEach((link) => {
+          const path = link.getAttribute('data-path');
+          if (path === 'peta-dan-lokasi') {
+            link.onclick = (e) => { e.preventDefault(); setDevScreen('MAIN'); };
+          } else if (path === 'form-kontribusi-p04') {
+            link.onclick = (e) => { e.preventDefault(); setDevScreen('P04'); };
+          } else if (path === 'hasil-dan-status-p05') {
+            link.onclick = (e) => { e.preventDefault(); setDevScreen('P05'); };
+          } else if (path === 'panel-admin-p06') {
+            link.onclick = (e) => { e.preventDefault(); setDevScreen('P06'); };
+          } else if (path === 'petunjuk-aplikasi') {
+            link.onclick = (e) => { e.preventDefault(); openOnboardingModal(); };
+          } else if (path === 'masuk') {
+            link.onclick = (e) => { e.preventDefault(); openAuthModal('Masuk untuk mengakses semua fitur kontribusi.'); };
+          }
+        });
+      }
+
+      function toggleUserSession() {
+        if (currentUser) {
+          currentUser = null;
+          showToast('Sesi diubah ke: Mode Pengguna Tamu');
+        } else {
+          currentUser = { name: 'Budi Santoso', email: 'budi.santoso@email.com' };
+          showToast('Sesi diubah ke: Budi Santoso (Pengguna Terdaftar)');
+        }
+        updateUserSessionUI();
+      }
+
+      function updateUserSessionUI() {
+        const userText = document.getElementById('userStatusText');
+        const userIcon = document.getElementById('userStatusIcon');
+        if (currentUser) {
+          userText.innerText = currentUser.name;
+          userIcon.innerText = 'verified_user';
+        } else {
+          userText.innerText = 'Tamu (Belum Login)';
+          userIcon.innerText = 'person_off';
+        }
+      }
+
+      function handleContributionAction() {
+        if (!currentUser) {
+          openAuthModal('Masuk untuk berkontribusi menambahkan tempat baru ke direktori SNIJ.');
+        } else {
+          switchView('viewFormContribution');
+          setDevScreen('P04');
+        }
+      }
+
+      function handleWriteReview(e, placeName) {
+        if (e) e.stopPropagation();
+        if (!currentUser) {
+          openAuthModal(`Masuk untuk menulis ulasan dan verifikasi colokan di ${placeName}.`);
+        } else {
+          showToast(`Membuka form ulasan untuk: ${placeName}`);
+        }
+      }
+
+      function handleSaveFavorite(e, placeName) {
+        if (e) e.stopPropagation();
+        if (!currentUser) {
+          openAuthModal(`Masuk untuk menyimpan ${placeName} ke daftar favorit pribadi Anda.`);
+        } else {
+          showToast(`Tersimpan ke Favorit: ${placeName}`);
+        }
+      }
+
+      function openAuthModal(contextMsg) {
+        const modal = document.getElementById('authModal');
+        const card = document.getElementById('authModalCard');
+        if (contextMsg) document.getElementById('authContextMsg').innerText = contextMsg;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        setTimeout(() => {
+          card.classList.remove('scale-95', 'opacity-0');
+          card.classList.add('scale-100', 'opacity-100');
+        }, 10);
+      }
+
+      function closeAuthModal() {
+        const modal = document.getElementById('authModal');
+        const card = document.getElementById('authModalCard');
+        card.classList.add('scale-95', 'opacity-0');
+        card.classList.remove('scale-100', 'opacity-100');
+        setTimeout(() => {
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+        }, 150);
+      }
+
+      function switchAuthTab(type) {
+        const tabLogin = document.getElementById('authTabLogin');
+        const tabReg = document.getElementById('authTabRegister');
+        const submitText = document.getElementById('authSubmitText');
+        if (type === 'login') {
+          tabLogin.className = 'flex-1 rounded-md bg-surface-container-lowest py-1.5 font-label-md text-label-md text-primary shadow-sm';
+          tabReg.className = 'flex-1 rounded-md py-1.5 font-label-md text-label-md text-on-surface-variant';
+          submitText.innerText = 'Masuk ke Akun';
+        } else {
+          tabReg.className = 'flex-1 rounded-md bg-surface-container-lowest py-1.5 font-label-md text-label-md text-primary shadow-sm';
+          tabLogin.className = 'flex-1 rounded-md py-1.5 font-label-md text-label-md text-on-surface-variant';
+          submitText.innerText = 'Daftar & Buat Akun Baru';
+        }
+      }
+
+      function performSimulatedLogin(userName) {
+        currentUser = { name: userName, email: document.getElementById('authEmail').value };
+        updateUserSessionUI();
+        closeAuthModal();
+        showToast(`Berhasil masuk sebagai ${userName}! Akses kontribusi dibuka.`);
+      }
+
+      function openOnboardingModal() {
+        currentSlide = 0;
+        updateOnboardingSlide();
+        const modal = document.getElementById('onboardingModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+
+      function closeOnboardingModal() {
+        document.getElementById('onboardingModal').classList.add('hidden');
+        document.getElementById('onboardingModal').classList.remove('flex');
+      }
+
+      function updateOnboardingSlide() {
+        const slides = document.querySelectorAll('.onboarding-slide');
+        const dots = document.querySelectorAll('.onboarding-dot');
+        const prevBtn = document.getElementById('onboardingPrevBtn');
+        const nextBtn = document.getElementById('onboardingNextBtn');
+
+        slides.forEach((slide, idx) => slide.classList.toggle('hidden', idx !== currentSlide));
+        dots.forEach((dot, idx) => {
+          dot.className = idx === currentSlide ? 'onboarding-dot h-5 w-2 rounded-full bg-primary transition-all' : 'onboarding-dot h-2.5 w-2.5 rounded-full bg-surface-container-high transition-all';
+        });
+
+        prevBtn.classList.toggle('hidden', currentSlide === 0);
+        nextBtn.innerText = currentSlide === totalSlides - 1 ? 'Mulai Gunakan Aplikasi' : 'Lanjut';
+      }
+
+      function nextOnboardingSlide() {
+        if (currentSlide < totalSlides - 1) {
+          currentSlide += 1;
+          updateOnboardingSlide();
+        } else {
+          closeOnboardingModal();
+          showToast('Selamat menjelajahi peta tempat nugas SNIJ!');
+        }
+      }
+
+      function prevOnboardingSlide() {
+        if (currentSlide > 0) {
+          currentSlide -= 1;
+          updateOnboardingSlide();
+        }
+      }
+
+      function switchView(viewId) {
+        currentActiveView = viewId;
+        const views = ['viewMainMap', 'viewFormContribution', 'viewFeedbackResult', 'viewAdminQueue'];
+        views.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.classList.toggle('hidden', id !== viewId);
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function focusMapMarker(name, lat, lng) {
+        showToast(`Fokus ke lokasi: ${name}`);
+        const cards = {
+          'Kopi Nugas Kemang': { outlets: '8 Colokan Aktif', address: 'Jl. Kemang Timur No. 42, Jaksel', wifi: '120 Mbps' },
+          'Ruang Kreatif Sabang': { outlets: '14 Colokan Meja', address: 'Jl. H. Agus Salim No. 18, Jakpus', wifi: '250 Mbps' },
+          'WorkHub Dago Corner': { outlets: '6 Colokan Tiang', address: 'Jl. Ir. H. Djuanda No. 102, Bandung', wifi: '80 Mbps' },
+          'Kolektif Coffee & Study': { outlets: '12 Colokan Pod', address: 'Jl. Tebet Barat Dalam VII, Jaksel', wifi: '100 Mbps' }
+        };
+        const info = cards[name];
+        if (info) showMapPopup(name, info.outlets, info.address, info.wifi);
+      }
+
+      function showMapPopup(title, outlet, address, wifi) {
+        const popup = document.getElementById('mapPopupCard');
+        document.getElementById('popupTitle').innerText = title;
+        document.getElementById('popupOutlet').innerHTML = `<span class="material-symbols-outlined text-[14px]">bolt</span> ${outlet}`;
+        document.getElementById('popupAddress').innerText = address;
+        document.getElementById('popupWifi').innerHTML = `<span class="material-symbols-outlined text-[14px]">wifi</span> ${wifi}`;
+        popup.classList.remove('hidden');
+      }
+
+      function closeMapPopup() {
+        document.getElementById('mapPopupCard').classList.add('hidden');
+      }
+
+      function simulateNavigateRoute() {
+        const target = document.getElementById('popupTitle').innerText;
+        showToast(`Navigasi turn-by-turn rute menuju ${target} dimulai.`);
+      }
+
+      function setOutletFilter(min) {
+        filterMinOutlet = min;
+        document.querySelectorAll('.filter-outlet-btn').forEach((btn) => {
+          const val = parseInt(btn.getAttribute('data-val'), 10);
+          btn.className = val === min ? 'filter-outlet-btn rounded-full bg-secondary px-3 py-1 font-label-sm text-label-sm text-on-secondary' : 'filter-outlet-btn rounded-full px-3 py-1 font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface';
+        });
+        applyFilters();
+      }
+
+      function toggleFeatureFilter(feature) {
+        if (feature === 'fastWifi') {
+          filterWifi = !filterWifi;
+          updateChipStyle('chipWifi', filterWifi);
+        } else if (feature === 'hasAc') {
+          filterAc = !filterAc;
+          updateChipStyle('chipAc', filterAc);
+        } else if (feature === 'open24h') {
+          filter24h = !filter24h;
+          updateChipStyle('chip24h', filter24h);
+        }
+        applyFilters();
+      }
+
+      function updateChipStyle(chipId, isActive) {
+        const el = document.getElementById(chipId);
+        if (isActive) {
+          el.className = 'inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 font-label-sm text-label-sm text-on-secondary shadow-sm';
+        } else {
+          el.className = 'inline-flex items-center gap-1.5 rounded-full bg-surface-container-low px-3 py-1.5 font-label-sm text-label-sm text-on-surface-variant transition-colors hover:bg-surface-container';
+        }
+      }
+
+      function resetAllFilters() {
+        filterMinOutlet = 0;
+        filterWifi = false;
+        filterAc = false;
+        filter24h = false;
+        setOutletFilter(0);
+        updateChipStyle('chipWifi', false);
+        updateChipStyle('chipAc', false);
+        updateChipStyle('chip24h', false);
+        document.getElementById('searchInput').value = '';
+        applyFilters();
+        showToast('Semua filter direset.');
+      }
+
+      function resetAllFiltersAndGoMap() {
+        resetAllFilters();
+        setDevScreen('MAIN');
+      }
+
+      function applyFilters() {
+        const cards = document.querySelectorAll('.place-card');
+        let visibleCount = 0;
+        cards.forEach((card, idx) => {
+          const data = placesData[idx];
+          let matches = true;
+          if (data.outlets < filterMinOutlet) matches = false;
+          if (filterWifi && !data.wifi) matches = false;
+          if (filterAc && !data.ac) matches = false;
+          if (filter24h && !data.is24h) matches = false;
+
+          card.classList.toggle('hidden', !matches);
+          if (matches) visibleCount += 1;
+        });
+
+        document.getElementById('placeCountText').innerText = `Menampilkan ${visibleCount} tempat nugas terverifikasi`;
+        if (visibleCount === 0) showToast('Tidak ada hasil. Anda dapat menguji layar P05_empty.');
+      }
+
+      function handleSearch(query) {
+        const q = query.toLowerCase();
+        const cards = document.querySelectorAll('.place-card');
+        let count = 0;
+        cards.forEach((card, idx) => {
+          const item = placesData[idx];
+          const match = item.name.toLowerCase().includes(q);
+          card.classList.toggle('hidden', !match);
+          if (match) count += 1;
+        });
+        document.getElementById('placeCountText').innerText = `Menampilkan ${count} tempat ditemukan`;
+      }
+
+      function clearSearch() {
+        document.getElementById('searchInput').value = '';
+        handleSearch('');
+      }
+
+      function submitContributionForm() {
+        const placeName = document.getElementById('p04PlaceName').value.trim();
+        const outletVal = document.getElementById('p04OutletCount').value.trim();
+
+        if (currentDevState === 'error' || !placeName || isNaN(outletVal) || outletVal < 0 || outletVal > 100) {
+          applySimulatedState('error');
+          return;
+        }
+
+        applySimulatedState('loading');
+        setTimeout(() => {
+          document.getElementById('p05PlaceNameRecorded').innerText = placeName;
+          setDevScreen('P05');
+          applySimulatedState('success');
+          showToast('HTTP 201 Created: Kontribusi berhasil disimpan!');
+        }, 1400);
+      }
+
+      function adoptNewPlaceName() {
+        document.getElementById('p04AutocompleteEmpty').classList.add('hidden');
+        showToast('Nama tempat baru diadopsi ke form!');
+      }
+
+      function approveQueueItem(rowId) {
+        if (currentDevState === 'error') {
+          document.getElementById('p06ConflictToast').classList.remove('hidden');
+          return;
+        }
+        const row = document.getElementById(rowId);
+        if (row) {
+          row.style.opacity = '0';
+          row.style.transform = 'translateX(20px)';
+          setTimeout(() => {
+            row.remove();
+            document.getElementById('p06SuccessToast').classList.remove('hidden');
+            const remaining = document.querySelectorAll('#adminTableRows tr').length;
+            if (remaining === 0) document.getElementById('p06EmptyStateBox').classList.remove('hidden');
+          }, 300);
+        }
+      }
+
+      function rejectQueueItem(rowId) {
+        const row = document.getElementById(rowId);
+        if (row) {
+          row.remove();
+          showToast('Kontribusi ditolak.');
+          const remaining = document.querySelectorAll('#adminTableRows tr').length;
+          if (remaining === 0) document.getElementById('p06EmptyStateBox').classList.remove('hidden');
+        }
+      }
+
+      function refreshAdminQueue() {
+        applySimulatedState('loading');
+        setTimeout(() => {
+          applySimulatedState('success');
+          showToast('Antrean admin berhasil dimutakhirkan.');
+        }, 800);
+      }
+
+      function setDevScreen(screen) {
+        currentDevScreen = screen;
+        const buttons = { MAIN: 'btnDevScreenMain', P04: 'btnDevScreenP04', P05: 'btnDevScreenP05', P06: 'btnDevScreenP06' };
+
+        Object.keys(buttons).forEach((key) => {
+          const btn = document.getElementById(buttons[key]);
+          if (key === screen) {
+            btn.className = 'rounded bg-secondary px-2 py-1.5 font-medium text-white';
+          } else {
+            btn.className = 'rounded bg-primary-container px-2 py-1.5 font-medium text-surface-variant';
+          }
+        });
+
+        if (screen === 'MAIN') switchView('viewMainMap');
+        if (screen === 'P04') switchView('viewFormContribution');
+        if (screen === 'P05') switchView('viewFeedbackResult');
+        if (screen === 'P06') switchView('viewAdminQueue');
+
+        updateStateBanner();
+      }
+
+      function applySimulatedState(stateName) {
+        currentDevState = stateName;
+        updateStateBanner();
+
+        if (currentDevScreen === 'P04') renderP04State(stateName);
+        else if (currentDevScreen === 'P05') renderP05State(stateName);
+        else if (currentDevScreen === 'P06') renderP06State(stateName);
+        else renderMainState(stateName);
+      }
+
+      function updateStateBanner() {
+        const badge = document.getElementById('currentStatusBadge');
+        badge.innerText = `STATE: [${currentDevScreen}_${currentDevState.toUpperCase()}]`;
+      }
+
+      function renderP04State(state) {
+        const submitBtn = document.getElementById('p04SubmitBtn');
+        const submitText = document.getElementById('p04SubmitBtnText');
+        const progressBar = document.getElementById('p04UploadProgressBar');
+        const errorBanner = document.getElementById('p04ErrorBanner');
+        const emptyBox = document.getElementById('p04AutocompleteEmpty');
+        const outletErr = document.getElementById('p04OutletValidationText');
+        const photoErr = document.getElementById('p04PhotoErrorText');
+
+        errorBanner.classList.add('hidden');
+        emptyBox.classList.add('hidden');
+        outletErr.classList.add('hidden');
+        photoErr.classList.add('hidden');
+        progressBar.classList.add('hidden');
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+        submitText.innerText = 'Kirim Kontribusi Tempat';
+
+        if (state === 'loading') {
+          submitBtn.disabled = true;
+          submitBtn.classList.add('opacity-60', 'cursor-not-allowed');
+          submitText.innerHTML = '<span class="mr-1 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span> Mengirim...';
+          progressBar.classList.remove('hidden');
+        } else if (state === 'empty') {
+          emptyBox.classList.remove('hidden');
+        } else if (state === 'error') {
+          errorBanner.classList.remove('hidden');
+          outletErr.classList.remove('hidden');
+          photoErr.classList.remove('hidden');
+        } else if (state === 'success') {
+          showToast('[HTTP 201 Created] Berhasil dikirim! Mengalihkan ke status...');
+          setTimeout(() => {
+            setDevScreen('P05');
+            renderP05State('success');
+          }, 600);
+        }
+      }
+
+      function renderP05State(state) {
+        const sSuccess = document.getElementById('p05StateSuccess');
+        const sEmpty = document.getElementById('p05StateEmpty');
+        const sError = document.getElementById('p05StateError');
+        const sLoading = document.getElementById('p05StateLoading');
+
+        sSuccess.classList.add('hidden');
+        sEmpty.classList.add('hidden');
+        sError.classList.add('hidden');
+        sLoading.classList.add('hidden');
+
+        if (state === 'loading') sLoading.classList.remove('hidden');
+        else if (state === 'empty') sEmpty.classList.remove('hidden');
+        else if (state === 'error') sError.classList.remove('hidden');
+        else sSuccess.classList.remove('hidden');
+      }
+
+      function retryP05Loading() {
+        applySimulatedState('loading');
+        setTimeout(() => applySimulatedState('success'), 700);
+      }
+
+      function renderP06State(state) {
+        const skeleton = document.getElementById('p06LoadingSkeleton');
+        const tableRows = document.getElementById('adminTableRows');
+        const emptyBox = document.getElementById('p06EmptyStateBox');
+        const errorBox = document.getElementById('p06ErrorStateBox');
+        const conflictToast = document.getElementById('p06ConflictToast');
+
+        skeleton.classList.add('hidden');
+        emptyBox.classList.add('hidden');
+        errorBox.classList.add('hidden');
+        conflictToast.classList.add('hidden');
+        tableRows.classList.remove('hidden');
+
+        if (state === 'loading') {
+          tableRows.classList.add('hidden');
+          skeleton.classList.remove('hidden');
+        } else if (state === 'empty') {
+          tableRows.classList.add('hidden');
+          emptyBox.classList.remove('hidden');
+        } else if (state === 'error') {
+          tableRows.classList.add('hidden');
+          errorBox.classList.remove('hidden');
+          conflictToast.classList.remove('hidden');
+        } else {
+          tableRows.classList.remove('hidden');
+        }
+      }
+
+      function renderMainState(state) {
+        if (state === 'empty') {
+          setOutletFilter(5);
+          filter24h = true;
+          updateChipStyle('chip24h', true);
+          applyFilters();
+        } else if (state === 'loading') {
+          showToast('Memuat titik data peta geospasial...');
+        } else if (state === 'error') {
+          showToast('Koneksi GPS tidak stabil. Gunakan mode offline.');
+        } else {
+          resetAllFilters();
+        }
+      }
+
+      function showToast(message) {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = 'pointer-events-auto translate-y-2 rounded-xl bg-primary px-4 py-2.5 font-body-sm text-body-sm text-on-primary shadow-xl opacity-0 transition-all duration-300';
+        toast.innerHTML = `<span class="material-symbols-outlined text-[16px] text-tertiary-fixed">info</span><span class="ml-2">${message}</span>`;
+        container.appendChild(toast);
+
+        setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 10);
+        setTimeout(() => {
+          toast.classList.add('opacity-0');
+          setTimeout(() => toast.remove(), 300);
+        }, 3500);
+      }
+
+      window.addEventListener('DOMContentLoaded', init);
+    </script>
   </body>
 </html>
