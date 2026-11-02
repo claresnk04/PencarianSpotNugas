@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SNIJ Navigator | Register</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container navbar">
+        <div class="brand">
+          <div class="brand-mark">S</div>
+          <span>SNIJ Navigator</span>
+        </div>
+        <nav class="nav">
+          <a href="landing.html">Beranda</a>
+          <a href="login.html">Login</a>
+          <a href="register.html" class="active">Register</a>
+          <a href="home.html">Home</a>
+          <a href="dashboard.html">Dashboard</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="auth-wrap">
+      <div class="auth-card">
+        <div class="auth-top">
+          <div class="brand">
+            <div class="brand-mark">S</div>
+            <span>SNIJ Navigator</span>
+          </div>
+          <a href="landing.html" class="btn btn-soft">Home</a>
+        </div>
+
+        <h2>Buat akun baru</h2>
+
+        <div id="formMessage" style="display:none;"></div>
+
+        <div class="field">
+          <label for="regName">Nama lengkap</label>
+          <input id="regName" type="text" placeholder="Contoh: Budi Santoso" />
+        </div>
+        <div class="field">
+          <label for="regEmail">Email</label>
+          <input id="regEmail" type="email" placeholder="nama@email.com" />
+        </div>
+        <div class="field">
+          <label for="regPassword">Password</label>
+          <input id="regPassword" type="password" placeholder="Buat password" />
+        </div>
+
+        <button class="btn btn-primary" style="width:100%;" id="registerBtn">Daftar</button>
+
+        <div class="bottom-text">
+          Sudah punya akun? <a href="login.html" class="link">Masuk</a>
+        </div>
+      </div>
+    </main>
+
+    <script src="../js/script.js"></script>
+  </body>
+</html>

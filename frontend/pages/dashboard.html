@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SNIJ Navigator | Dashboard</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container navbar">
+        <div class="brand">
+          <div class="brand-mark">S</div>
+          <span>SNIJ Navigator</span>
+        </div>
+        <nav class="nav">
+          <a href="landing.html">Beranda</a>
+          <a href="login.html">Login</a>
+          <a href="register.html">Register</a>
+          <a href="home.html">Home</a>
+          <a href="dashboard.html" class="active">Dashboard</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container page-shell">
+      <aside class="sidebar">
+        <h3>Dashboard</h3>
+        <div class="menu">
+          <button class="active">📊 Overview</button>
+          <button>📝 Antrean</button>
+          <button>✅ Disetujui</button>
+          <button>⚠️ Butuh revisi</button>
+          <button>👥 Pengguna</button>
+        </div>
+      </aside>
+
+      <div class="main-panel">
+        <div class="summary-grid">
+          <div class="stat-card"><p>Antrean</p><strong id="queueTotal">--</strong></div>
+          <div class="stat-card"><p>Menunggu review</p><strong id="pendingTotal">--</strong></div>
+          <div class="stat-card"><p>Disetujui</p><strong id="approvedTotal">--</strong></div>
+          <div class="stat-card"><p>Role</p><strong>ADMIN</strong></div>
+        </div>
+
+        <div class="panel">
+          <div class="section-header" style="margin-bottom:16px;">
+            <h3 style="margin:0;">Antrean kontribusi</h3>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th>Pengaju</th>
+                  <th>Status</th>
+                  <th>Detail</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="antreanTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-row">
+        <div>© <span id="year"></span> SNIJ Navigator</div>
+        <div>Panel moderator & admin</div>
+      </div>
+    </footer>
+
+    <script src="../js/script.js"></script>
+  </body>
+</html>

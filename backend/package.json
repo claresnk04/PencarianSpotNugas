@@ -1,0 +1,12 @@
+{
+  "name": "snij-api",
+  "version": "1.0.0",
+  "description": "REST API SNIJ (Spot Nugas Inklusif Jogja) - modul CRUD ENT-04 Kontribusi, Praktikum 10",
+  "main": "server.js",
+  "private": true,
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning server.js",
+    "test": "node --disable-warning=ExperimentalWarning --test \"test/**/*.test.js\""
+  }
+}

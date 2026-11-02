@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SNIJ Navigator | Home</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container navbar">
+        <div class="brand">
+          <div class="brand-mark">S</div>
+          <span>SNIJ Navigator</span>
+        </div>
+        <nav class="nav">
+          <a href="landing.html">Beranda</a>
+          <a href="login.html">Login</a>
+          <a href="register.html">Register</a>
+          <a href="home.html" class="active">Home</a>
+          <a href="dashboard.html">Dashboard</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container page-shell">
+      <aside class="sidebar">
+        <h3>Menu utama</h3>
+        <div class="menu">
+          <button class="active">🏠 Beranda</button>
+          <button>📍 Tempat favorit</button>
+          <button>🧭 Riwayat</button>
+          <button>📌 Kontribusi saya</button>
+          <button>⚙️ Pengaturan</button>
+        </div>
+      </aside>
+
+      <div class="main-panel">
+        <div class="summary-grid">
+          <div class="stat-card"><p>Tempat publik</p><strong id="publicPlaceCount">--</strong></div>
+          <div class="stat-card"><p>Colokan rata-rata</p><strong id="avgOutlet">--</strong></div>
+          <div class="stat-card"><p>Suasana tenang</p><strong id="quietCount">--</strong></div>
+          <div class="stat-card"><p>Status</p><strong id="sessionRole">USER</strong></div>
+        </div>
+
+        <div class="card-grid">
+          <div class="panel">
+            <div class="section-header" style="margin-bottom:16px;">
+              <h3 style="margin:0;">Ajukan tempat baru</h3>
+            </div>
+            <form id="contributionForm">
+              <div class="field">
+                <label for="contributionName">Nama tempat</label>
+                <input id="contributionName" type="text" placeholder="Contoh: Cafe Nusantara" required />
+              </div>
+              <div class="field">
+                <label for="contributionAddress">Alamat</label>
+                <input id="contributionAddress" type="text" placeholder="Alamat lengkap" required />
+              </div>
+              <div class="field">
+                <label for="contributionColokan">Persentase colokan</label>
+                <input id="contributionColokan" type="number" min="0" max="100" value="70" required />
+              </div>
+              <div class="field">
+                <label for="contributionNoise">Tingkat kebisingan</label>
+                <select id="contributionNoise">
+                  <option value="Hening">Hening</option>
+                  <option value="Sedang" selected>Sedang</option>
+                  <option value="Ramai">Ramai</option>
+                </select>
+              </div>
+              <button class="btn btn-primary" type="submit" style="width:100%;">Kirim kontribusi</button>
+            </form>
+          </div>
+
+          <div class="panel">
+            <div class="section-header" style="margin-bottom:16px;">
+              <h3 style="margin:0;">Daftar tempat publik</h3>
+            </div>
+            <div id="placesList"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-row">
+        <div>© <span id="year"></span> SNIJ Navigator</div>
+        <div>Tempat kerja nyaman untuk komunitas</div>
+      </div>
+    </footer>
+
+    <script src="../js/script.js"></script>
+  </body>
+</html>

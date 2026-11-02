@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SNIJ Navigator | Login</title>
+    <link rel="stylesheet" href="../css/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container navbar">
+        <div class="brand">
+          <div class="brand-mark">S</div>
+          <span>SNIJ Navigator</span>
+        </div>
+        <nav class="nav">
+          <a href="landing.html">Beranda</a>
+          <a href="login.html" class="active">Login</a>
+          <a href="register.html">Register</a>
+          <a href="home.html">Home</a>
+          <a href="dashboard.html">Dashboard</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="auth-wrap">
+      <div class="auth-card">
+        <div class="auth-top">
+          <div class="brand">
+            <div class="brand-mark">S</div>
+            <span>SNIJ Navigator</span>
+          </div>
+          <a href="landing.html" class="btn btn-soft">Home</a>
+        </div>
+
+        <h2>Masuk ke akun</h2>
+
+        <div id="formMessage" style="display:none;"></div>
+
+        <div class="field">
+          <label for="loginEmail">Email</label>
+          <input id="loginEmail" type="email" value="admin@snij.test" placeholder="nama@email.com" />
+        </div>
+        <div class="field">
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" type="password" value="Admin123!" placeholder="Masukkan password" />
+        </div>
+
+        <div class="row-inline">
+          <label style="display:flex; align-items:center; gap:8px;">
+            <input type="checkbox" /> Ingat saya
+          </label>
+          <a href="#" class="link">Lupa password?</a>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%;" id="loginBtn">Masuk sekarang</button>
+
+        <div class="bottom-text">
+          Belum punya akun? <a href="register.html" class="link">Daftar</a>
+        </div>
+      </div>
+    </main>
+
+    <script src="../js/script.js"></script>
+  </body>
+</html>
