@@ -1,7 +1,7 @@
 'use strict';
 const crypto = require('node:crypto');
 const { ApiError, sendJson, errorBody, success, readBody } = require('./http');
-const { signJwt, verifyJwt, verifyPassword, DUMMY_HASH } = require('./auth');
+const { signJwt, verifyJwt, verifyPassword, hashPassword, DUMMY_HASH } = require('./auth');
 const { tx } = require('./db');
 
 const NOISE = ['Hening', 'Sedang', 'Ramai'];
@@ -41,6 +41,29 @@ function createApp({ db, jwtSecret, jwtTtl = 28800, corsOrigin = '*', log = fals
     colokan_min: r.colokan_min, noise_level: r.noise_level, status: r.status, catatan_admin: r.catatan_admin, dikirim_pada: r.dikirim_pada });
 
   // ---------- handlers ----------
+  const registerUser = async ({ req, res }) => {
+    const b = await readBody(req), f = {};
+    const nama = typeof b.nama === 'string' ? b.nama.trim().replace(/\s+/g, ' ') : '';
+    const email = typeof b.email === 'string' ? b.email.trim().toLowerCase() : '';
+    const password = typeof b.password === 'string' ? b.password : '';
+    if (!nama) f.nama = 'Nama wajib diisi';
+    else if (nama.length < 2 || nama.length > 120) f.nama = 'Nama harus 2–120 karakter';
+    if (!email) f.email = 'Email wajib diisi';
+    else if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) f.email = 'Format email tidak valid';
+    if (!password) f.password = 'Kata sandi wajib diisi';
+    else if (password.length < 8 || password.length > 128) f.password = 'Kata sandi harus 8–128 karakter';
+    else if (!/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) f.password = 'Kata sandi harus mengandung huruf dan angka';
+    if (Object.keys(f).length) fail422('Pendaftaran belum dapat diproses. Periksa kembali isian Anda.', f);
+
+    let user;
+    tx(db, () => {
+      if (db.prepare('SELECT id FROM users WHERE email=?').get(email)) throw new ApiError(409, 'STATE_CONFLICT', 'Email tersebut sudah terdaftar.', { email: 'Gunakan email lain atau masuk ke akun Anda.' });
+      const result = db.prepare('INSERT INTO users(email,nama,password_hash,role) VALUES(?,?,?,?)').run(email, nama, hashPassword(password), 'USER');
+      user = db.prepare('SELECT id,email,nama,role FROM users WHERE id=?').get(result.lastInsertRowid);
+    });
+    sendJson(res, 201, success('Pendaftaran berhasil. Silakan masuk ke akun Anda.', { user }));
+  };
+
   const login = async ({ req, res, ip }) => {
     const b = await readBody(req), f = {};
     if (typeof b.email !== 'string' || !b.email.trim()) f.email = 'Email wajib diisi';
@@ -196,6 +219,7 @@ function createApp({ db, jwtSecret, jwtTtl = 28800, corsOrigin = '*', log = fals
   const R = (method, re, auth, fn) => ({ method, re, auth, fn });
   const routes = [
     R('GET', /^\/health$/, null, ({ res }) => sendJson(res, 200, success('OK', { uptime: process.uptime() }))),
+    R('POST', /^\/api\/v1\/auth\/register$/, null, registerUser),
     R('POST', /^\/api\/v1\/auth\/login$/, null, login),
     R('GET', /^\/api\/v1\/tempat$/, null, listTempat),
     R('GET', /^\/api\/v1\/tempat\/(\d+)$/, null, getTempat),

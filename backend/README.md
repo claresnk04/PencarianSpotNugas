@@ -8,9 +8,9 @@ JWT HS256 dan hash password (scrypt) memakai `node:crypto`. Database: SQLite (fi
 cp .env.example .env                  # isi JWT_SECRET (>= 32 karakter)
 export $(grep -v '^#' .env | xargs)   # atau set variabel lingkungan dengan cara lain
 npm start                             # http://localhost:3000
-npm test                              # 11 test otomatis (T01–T10 + login)
+npm test                              # test otomatis API
 ```
-Akun awal (dibuat sekali bila tabel kosong): `admin@snij.test / Admin123!` (ADMIN), `user@snij.test / User123!` (USER). **Ganti di produksi** lewat `SEED_*`.
+Akun awal bersifat opsional dan hanya dibuat bila pasangan `SEED_*` diisi. Jangan memakai kredensial demo di produksi.
 
 ## Format respons
 Sukses: `{"status":"SUCCESS","message":"...","data":...,"meta":{page,limit,total,total_pages}}`
@@ -23,6 +23,7 @@ Kode: `VALIDATION_ERROR` 422 · `UNAUTHORIZED` 401 · `FORBIDDEN` 403 · `STATE_
 ## Endpoint
 | Method + Route | Akses | Keterangan |
 |---|---|---|
+| `POST /api/v1/auth/register` | publik | body `{nama,email,password}` → akun baru ber-role USER. Password 8–128 karakter, wajib mengandung huruf dan angka. 201 / 409 / 422 |
 | `POST /api/v1/auth/login` | publik | body `{email,password}` → `data.token` (JWT, role USER/ADMIN). Gagal: 401; kosong: 422; >10 gagal/15 mnt: 429 |
 | `GET /api/v1/tempat` | publik | query: `q`(2–60), `colokan_min`(0–100), `noise`(Hening,Sedang,Ramai; boleh koma), `sort`(diperbarui_pada,colokan_min,nama_tempat), `order`, `page`, `limit`(1–100, default 20). Tidak ada hasil → **200 `data: []`**; parameter salah → **422** |
 | `GET /api/v1/tempat/:id` | publik | 200 / 404 |
@@ -56,5 +57,5 @@ Untuk bukti laporan, jalankan skenario yang sama lewat Postman/Network tab dan a
 
 ## Batasan yang disengaja
 - **Upload foto speedtest (multipart) belum ada** → request multipart dijawab 415. Body: JSON atau `x-www-form-urlencoded`.
-- Tidak ada DELETE (tidak diminta di spesifikasi ini), refresh token, maupun logout.
+- Tidak ada DELETE (tidak diminta di spesifikasi ini) maupun refresh token. Logout dilakukan dengan menghapus token di sisi frontend.
 - Rate limit login hanya in-memory (per proses). Untuk produksi pasang HTTPS/reverse proxy di depan server ini.

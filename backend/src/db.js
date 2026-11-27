@@ -34,10 +34,10 @@ function tx(db, fn) {
 function seed(db, o = {}) {
   if (db.prepare('SELECT COUNT(*) c FROM users').get().c === 0) {
     const ins = db.prepare('INSERT INTO users(email,nama,password_hash,role) VALUES(?,?,?,?)');
-    ins.run((o.adminEmail || 'admin@snij.test').toLowerCase(), 'Admin SNIJ', hashPassword(o.adminPassword || 'Admin123!'), 'ADMIN');
-    ins.run((o.userEmail || 'user@snij.test').toLowerCase(), 'Pengguna Demo', hashPassword(o.userPassword || 'User123!'), 'USER');
+    if (o.adminEmail && o.adminPassword) ins.run(o.adminEmail.toLowerCase(), 'Admin SNIJ', hashPassword(o.adminPassword), 'ADMIN');
+    if (o.userEmail && o.userPassword) ins.run(o.userEmail.toLowerCase(), 'Pengguna', hashPassword(o.userPassword), 'USER');
   }
-  if (o.demoTempat !== false && db.prepare('SELECT COUNT(*) c FROM tempat').get().c === 0) {
+  if (o.demoTempat === true && db.prepare('SELECT COUNT(*) c FROM tempat').get().c === 0) {
     const now = new Date().toISOString();
     const ins = db.prepare('INSERT INTO tempat(nama_tempat,alamat,lat,lng,colokan_min,noise_level,diperbarui_pada) VALUES(?,?,?,?,?,?,?)');
     [['Kafe Demo Gejayan', 'Jl. Contoh No. 1', -7.775, 110.39, 90, 'Hening'], ['Perpustakaan Demo Kampus', 'Jl. Contoh No. 2', -7.77, 110.38, 70, 'Hening'],

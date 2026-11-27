@@ -16,7 +16,7 @@ const valid = (o = {}) => ({ nama_tempat: 'Kafe Sudut Gejayan', colokan_min: 85,
 const assertErr = (r, status, code) => { assert.equal(r.status, status); assert.equal(r.json.status, 'ERROR'); assert.equal(r.json.code, code); assert.ok(r.json.message); assert.ok(r.json.error && typeof r.json.error.fields === 'object'); assert.ok(!/stack|at Object|node:/.test(JSON.stringify(r.json))); };
 
 before(async () => {
-  db = openDb(':memory:'); seed(db);
+  db = openDb(':memory:'); seed(db, { adminEmail: 'admin@snij.test', adminPassword: 'Admin123!', userEmail: 'user@snij.test', userPassword: 'User123!', demoTempat: true });
   server = http.createServer(createApp({ db, jwtSecret: 'x'.repeat(40) }));
   await new Promise((r) => server.listen(0, r)); base = `http://127.0.0.1:${server.address().port}`;
   admin = await login('admin@snij.test', 'Admin123!'); user = await login('user@snij.test', 'User123!');
@@ -28,6 +28,15 @@ test('login: sukses (USER & ADMIN), salah sandi 401, field kosong 422', async ()
   assert.equal(a.status, 200); assert.equal(a.json.data.user.role, 'ADMIN'); assert.equal(a.json.data.token.split('.').length, 3);
   assertErr(await call('POST', '/api/v1/auth/login', { body: { email: 'admin@snij.test', password: 'salah' } }), 401, 'UNAUTHORIZED');
   const e = await call('POST', '/api/v1/auth/login', { body: {} }); assertErr(e, 422, 'VALIDATION_ERROR'); assert.ok(e.json.error.fields.email && e.json.error.fields.password);
+});
+
+test('register: USER baru, validasi password, email duplikat, lalu login', async () => {
+  const created = await call('POST', '/api/v1/auth/register', { body: { nama: 'Pengguna Baru', email: 'baru@snij.test', password: 'Rahasia123' } });
+  assert.equal(created.status, 201); assert.equal(created.json.data.user.role, 'USER'); assert.equal(created.json.data.user.email, 'baru@snij.test');
+  assert.equal((await call('POST', '/api/v1/auth/login', { body: { email: 'baru@snij.test', password: 'Rahasia123' } })).status, 200);
+  assertErr(await call('POST', '/api/v1/auth/register', { body: { nama: 'Lain', email: 'baru@snij.test', password: 'Rahasia123' } }), 409, 'STATE_CONFLICT');
+  const invalid = await call('POST', '/api/v1/auth/register', { body: { nama: 'A', email: 'bukan-email', password: 'pendek' } });
+  assertErr(invalid, 422, 'VALIDATION_ERROR'); assert.ok(invalid.json.error.fields.email && invalid.json.error.fields.password);
 });
 
 test('T01 CRUD valid: POST 201 PENDING -> muncul di antrean -> PATCH APPROVED 200 -> tampil publik', async () => {
