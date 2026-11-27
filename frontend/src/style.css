@@ -136,3 +136,11 @@ kbd { padding: 3px 6px; border: 1px solid #d5dbe7; border-radius: 5px; color: #8
 .speedtest-preview, .speedtest-detail img { display: block; width: min(100%, 420px); max-height: 300px; object-fit: contain; border: 1px solid var(--line); border-radius: 10px; background: #f7f9fc; }
 .speedtest-detail { display: grid; gap: 10px; margin: 16px 0; color: var(--navy-deep); font-size: 12px; }
 .detail-noise { margin: -5px 0 17px; color: var(--muted); font-size: 12px; }
+.password-field { display: grid; gap: 7px; color: var(--navy-deep); font-size: 12px; font-weight: 700; }
+.password-input-wrap { position: relative; }
+.password-input-wrap input { padding-right: 44px; }
+.password-visibility-toggle { position: absolute; top: 50%; right: 7px; display: grid; place-items: center; width: 34px; height: 34px; padding: 0; border: 0; border-radius: 7px; color: var(--muted); background: transparent; transform: translateY(-50%); }
+.password-visibility-toggle:hover { color: var(--navy); background: #e9edfb; }
+.password-visibility-toggle:focus-visible { outline: 2px solid var(--teal); outline-offset: 1px; }
+.password-field.has-error input { border-color: #e48b83; }
+.password-field small { color: var(--red); font-size: 11px; font-weight: 500; }
