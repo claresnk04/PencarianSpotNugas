@@ -22,13 +22,17 @@ const JOGJA_SPOTS = [
   ['Kebon Klengkeng Cafe', 'Jl. Kledokan, Caturtunggal, Depok, Sleman', -7.7709, 110.3997, 72, 'Sedang', null, 1, '["Toilet","Parkir","Area outdoor","Ruang non-smoking"]'],
 ];
 
-const db = openDb(process.env.DB_FILE || './data/snij.db');
-if (db.prepare('SELECT COUNT(*) c FROM tempat').get().c === 0) {
-  const now = new Date().toISOString();
-  const ins = db.prepare(
-    'INSERT INTO tempat(nama_tempat,alamat,lat,lng,colokan_min,noise_level,fasilitas_inklusif,wifi,fasilitas_lainnya,diperbarui_pada) VALUES(?,?,?,?,?,?,?,?,?,?)',
-  );
-  for (const row of JOGJA_SPOTS) ins.run(...row, now);
-  console.log(`Seeded ${JOGJA_SPOTS.length} Jogja spots.`);
+if (require.main === module) {
+  const db = openDb(process.env.DB_FILE || './data/snij.db');
+  if (db.prepare('SELECT COUNT(*) c FROM tempat').get().c === 0) {
+    const now = new Date().toISOString();
+    const ins = db.prepare(
+      'INSERT INTO tempat(nama_tempat,alamat,lat,lng,colokan_min,noise_level,fasilitas_inklusif,wifi,fasilitas_lainnya,diperbarui_pada) VALUES(?,?,?,?,?,?,?,?,?,?)',
+    );
+    for (const row of JOGJA_SPOTS) ins.run(...row, now);
+    console.log(`Seeded ${JOGJA_SPOTS.length} Jogja spots.`);
+  }
+  db.close();
 }
-db.close();
+
+module.exports = { JOGJA_SPOTS };

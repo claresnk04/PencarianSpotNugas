@@ -2,7 +2,7 @@ import { AUTH_SESSION_EVENT, clearSession, getSession } from './session';
 import type { ApiEnvelope, AuthResponse, Contribution, InclusiveFacility, OtherFacility, Place, PlaceReview, PlaceReviewsResponse, User } from '../types';
 import { ApiRequestError } from '../types';
 
-const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3000/api/v1';
+const API_BASE = import.meta.env.VITE_API_BASE ?? (import.meta.env.PROD ? '/api/v1' : 'http://localhost:3000/api/v1');
 
 export function getAssetUrl(path: string) {
   return new URL(path, `${API_BASE}/`).toString();

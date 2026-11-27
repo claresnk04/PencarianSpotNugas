@@ -1,0 +1,7 @@
+{
+  "name": "spotnugas-monorepo",
+  "private": true,
+  "engines": {
+    "node": "22.x"
+  }
+}
