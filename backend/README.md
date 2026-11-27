@@ -28,6 +28,9 @@ Kode: `VALIDATION_ERROR` 422 · `UNAUTHORIZED` 401 · `FORBIDDEN` 403 · `STATE_
 | `POST /api/v1/auth/login` | publik | body `{email,password}` → `data.token` (JWT, role USER/ADMIN). Gagal: 401; kosong: 422; >10 gagal/15 mnt: 429 |
 | `GET /api/v1/tempat` | publik | query: `q`(2–60), `colokan_min`(0–100), `noise`(Hening,Sedang,Ramai; boleh koma), `wifi`(true/false), `fasilitas`(pilihan koma-terpisah), `sort`(diperbarui_pada,colokan_min,nama_tempat), `order`, `page`, `limit`(1–100, default 20). Filter fasilitas bersifat AND. Tidak ada hasil → **200 `data: []`**; parameter salah → **422** |
 | `GET /api/v1/tempat/:id` | publik | 200 / 404 |
+| `GET /api/v1/tempat/:id/ulasan` | publik | Daftar ulasan bertanggal, ringkasan rating rata-rata/jumlah; mendukung `page` dan `limit` |
+| `GET /api/v1/tempat/:id/ulasan/saya` | token (USER/ADMIN) | Mengambil ulasan milik pengguna untuk tempat tersebut; belum ada ulasan → `data: null` |
+| `PUT /api/v1/tempat/:id/ulasan` | token (USER/ADMIN) | Body `{rating, komentar}`; rating bilangan bulat 1–5, komentar wajib maksimal 1000 karakter. Satu ulasan per pengguna per tempat; request berikutnya memperbarui ulasan yang sama. Langsung tampil publik. 200 / 401 / 404 / 422 |
 | `POST /api/v1/upload/speedtest` | token (USER/ADMIN) | JSON `{mime_type,data}` dengan `data` base64. JPEG/PNG/WebP, maksimal 3 MiB. Mengembalikan path `foto_speedtest` untuk disertakan pada kontribusi. 201 / 401 / 422 / 413 |
 | `GET /api/v1/uploads/speedtest/:id.:ext` | publik | Mengambil foto speedtest tersimpan; hanya id acak dan ekstensi JPG/PNG/WebP yang diterima. 200 / 404 |
 | `POST /api/v1/kontribusi` | token (USER/ADMIN) | `nama_tempat` wajib; `colokan_min` 0–100 (alias `persen_colokan`); opsional `noise_level`, `fasilitas_inklusif` (array pilihan), `wifi` (boolean), `fasilitas_lainnya` (array pilihan), `foto_speedtest` (path hasil upload), `alamat`, `lat`+`lng`. Header `Idempotency-Key` (8–128 karakter, disarankan UUID). Status dipaksa `PENDING`; `id/status/dikirim_pada/catatan_admin` dari klien diabaikan. 201 / 401 / 422 / 409 |
@@ -45,6 +48,7 @@ Urutan pemeriksaan: 401 → 403 → validasi body (422) → 404 → transisi sta
 - **Idempotency:** kunci berlaku per user. Kunci sama + data sama → record yang sama (header `Idempotency-Replayed: true`, tidak ada record baru). Kunci sama + data beda → 409. Request yang gagal validasi tidak memakai kunci.
 - **Role** dibaca dari database pada tiap request, bukan dari klaim token.
 - **SQL injection:** semua query berparameter; `sort` memakai whitelist.
+- Ulasan hanya terhubung ke tempat yang sudah ada di katalog publik, sehingga menulis ulasan tidak membuat tempat baru. Keunikan `(tempat_id,user_id)` dan upsert transaksional menjaga satu ulasan per pengguna/kafe.
 - Foto diperiksa berdasarkan tipe MIME dan signature file, dibatasi 3 MiB, diberi nama UUID, dan disimpan di `UPLOAD_DIR` (default `backend/uploads`). Simpan direktori ini bersama `DB_FILE` saat backup dan gunakan storage persisten.
 
 ## Konfigurasi produksi

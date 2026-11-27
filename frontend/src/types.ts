@@ -58,6 +58,23 @@ export interface Place {
   diperbarui_pada?: string;
 }
 
+export interface PlaceReview {
+  id: number;
+  rating: number;
+  komentar: string;
+  nama_pengguna: string;
+  dibuat_pada: string;
+  diperbarui_pada: string;
+}
+
+export interface PlaceReviewsResponse {
+  ringkasan: {
+    rata_rata: number | null;
+    total: number;
+  };
+  ulasan: PlaceReview[];
+}
+
 export interface Contribution {
   id: number;
   nama_tempat: string;

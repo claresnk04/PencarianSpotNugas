@@ -83,6 +83,45 @@ test('fasilitas inklusif: disimpan, dikembalikan, dan divalidasi', async () => {
   assertErr(await call('POST', '/api/v1/kontribusi', { token: user, body: valid({ fasilitas_inklusif: ['Fasilitas tidak dikenal'] }) }), 422, 'VALIDATION_ERROR');
 });
 
+test('ulasan tempat: butuh login, rating/komentar tervalidasi, dan satu ulasan dapat diperbarui', async () => {
+  const placeId = db.prepare('SELECT id FROM tempat ORDER BY id LIMIT 1').get().id;
+  const placeCount = db.prepare('SELECT COUNT(*) AS count FROM tempat').get().count;
+  const url = `/api/v1/tempat/${placeId}/ulasan`;
+  const empty = await call('GET', url);
+  assert.equal(empty.status, 200);
+  assert.deepEqual(empty.json.data.ringkasan, { rata_rata: null, total: 0 });
+  assertErr(await call('PUT', url, { body: { rating: 5, komentar: 'Nyaman.' } }), 401, 'UNAUTHORIZED');
+  for (const body of [
+    { rating: 0, komentar: 'Tidak valid.' },
+    { rating: 6, komentar: 'Tidak valid.' },
+    { rating: 4.5, komentar: 'Tidak valid.' },
+    { rating: 5, komentar: '   ' },
+    { rating: 5, komentar: 'a'.repeat(1001) },
+    { rating: 5, komentar: 'Bagus.', nama_tempat: 'Kafe lain' },
+  ]) {
+    assertErr(await call('PUT', url, { token: user, body }), 422, 'VALIDATION_ERROR');
+  }
+
+  const first = await call('PUT', url, { token: user, body: { rating: 4, komentar: 'Tempat nyaman untuk belajar.' } });
+  assert.equal(first.status, 200);
+  assert.equal(first.json.data.nama_pengguna, 'Pengguna');
+  const own = await call('GET', `${url}/saya`, { token: user });
+  assert.equal(own.json.data.id, first.json.data.id);
+  const updated = await call('PUT', url, { token: user, body: { rating: 2, komentar: 'Perlu lebih banyak colokan.' } });
+  assert.equal(updated.status, 200);
+  assert.equal(updated.json.data.id, first.json.data.id);
+  assert.equal(updated.json.data.rating, 2);
+
+  await call('PUT', url, { token: admin, body: { rating: 4, komentar: 'Suasananya menyenangkan.' } });
+  const reviews = await call('GET', `${url}?limit=10`);
+  assert.equal(reviews.json.data.ringkasan.total, 2);
+  assert.equal(reviews.json.data.ringkasan.rata_rata, 3);
+  assert.equal(reviews.json.data.ulasan.length, 2);
+  assert.ok(reviews.json.data.ulasan.every((review) => !('user_id' in review) && !('email' in review)));
+  assert.equal(db.prepare('SELECT COUNT(*) AS count FROM tempat').get().count, placeCount);
+  assertErr(await call('GET', '/api/v1/tempat/999999/ulasan'), 404, 'NOT_FOUND');
+});
+
 test('upload speedtest, filter WiFi/fasilitas, dan publikasi foto saat disetujui', async () => {
   const png = Buffer.from('iVBORw0KGgo=', 'base64');
   assertErr(await call('POST', '/api/v1/upload/speedtest', {

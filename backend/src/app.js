@@ -59,6 +59,14 @@ function createApp({ db, jwtSecret, jwtTtl = 28800, corsOrigin = '*', uploadDir 
     try { const parsed = JSON.parse(value); return Array.isArray(parsed) ? parsed.filter((item) => OTHER_FACILITIES.includes(item)) : null; }
     catch { return null; }
   };
+  const reviewOut = (row) => ({
+    id: row.id,
+    rating: row.rating,
+    komentar: row.komentar,
+    nama_pengguna: row.nama_pengguna,
+    dibuat_pada: row.dibuat_pada,
+    diperbarui_pada: row.diperbarui_pada,
+  });
   const imageIsValid = (mime, data) => {
     if (mime === 'image/jpeg') return data.length >= 3 && data[0] === 0xff && data[1] === 0xd8 && data[2] === 0xff;
     if (mime === 'image/png') return data.length >= 8 && data.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
@@ -150,6 +158,59 @@ function createApp({ db, jwtSecret, jwtTtl = 28800, corsOrigin = '*', uploadDir 
     const r = db.prepare('SELECT id,nama_tempat,alamat,lat,lng,colokan_min,noise_level,fasilitas_inklusif,wifi,fasilitas_lainnya,foto_speedtest,diperbarui_pada FROM tempat WHERE id=?').get(+params[0]);
     if (!r) throw new ApiError(404, 'NOT_FOUND', 'Tempat tidak ditemukan.');
     sendJson(res, 200, success('Berhasil mengambil detail tempat.', { ...r, fasilitas_inklusif: parseInclusive(r.fasilitas_inklusif), wifi: r.wifi === null ? null : Boolean(r.wifi), fasilitas_lainnya: parseFacilities(r.fasilitas_lainnya) }));
+  };
+
+  const listUlasan = ({ res, params, query: q }) => {
+    const tempatId = Number(params[0]), fields = {};
+    if (!Number.isSafeInteger(tempatId) || tempatId < 1 || !db.prepare('SELECT id FROM tempat WHERE id=?').get(tempatId)) {
+      throw new ApiError(404, 'NOT_FOUND', 'Tempat tidak ditemukan.');
+    }
+    const { page, limit } = paging(q, fields, 10);
+    if (Object.keys(fields).length) fail422('Periksa parameter ulasan.', fields);
+    const total = db.prepare('SELECT COUNT(*) AS count FROM ulasan WHERE tempat_id=?').get(tempatId).count;
+    const average = db.prepare('SELECT AVG(rating) AS average FROM ulasan WHERE tempat_id=?').get(tempatId).average;
+    const rows = db.prepare(`SELECT r.id,r.rating,r.komentar,r.dibuat_pada,r.diperbarui_pada,u.nama AS nama_pengguna
+      FROM ulasan r JOIN users u ON u.id=r.user_id WHERE r.tempat_id=?
+      ORDER BY r.diperbarui_pada DESC,r.id DESC LIMIT ? OFFSET ?`).all(tempatId, limit, (page - 1) * limit);
+    sendJson(res, 200, success('Berhasil mengambil ulasan tempat.', {
+      ringkasan: { rata_rata: average === null ? null : Math.round(average * 10) / 10, total },
+      ulasan: rows.map(reviewOut),
+    }, meta(page, limit, total)));
+  };
+
+  const getUlasanSaya = ({ res, params, user }) => {
+    const tempatId = Number(params[0]);
+    if (!Number.isSafeInteger(tempatId) || tempatId < 1 || !db.prepare('SELECT id FROM tempat WHERE id=?').get(tempatId)) {
+      throw new ApiError(404, 'NOT_FOUND', 'Tempat tidak ditemukan.');
+    }
+    const row = db.prepare(`SELECT r.id,r.rating,r.komentar,r.dibuat_pada,r.diperbarui_pada,u.nama AS nama_pengguna
+      FROM ulasan r JOIN users u ON u.id=r.user_id WHERE r.tempat_id=? AND r.user_id=?`).get(tempatId, user.id);
+    sendJson(res, 200, success(row ? 'Ulasan Anda ditemukan.' : 'Anda belum mengulas tempat ini.', row ? reviewOut(row) : null));
+  };
+
+  const saveUlasan = async ({ req, res, params, user }) => {
+    const tempatId = Number(params[0]), body = await readBody(req), fields = {};
+    for (const key of Object.keys(body)) if (key !== 'rating' && key !== 'komentar') fields[key] = 'Field ini tidak didukung.';
+    if (!Number.isSafeInteger(tempatId) || tempatId < 1) throw new ApiError(404, 'NOT_FOUND', 'Tempat tidak ditemukan.');
+    if (!Number.isInteger(body.rating) || body.rating < 1 || body.rating > 5) fields.rating = 'Rating harus bilangan bulat 1–5.';
+    let komentar = '';
+    if (typeof body.komentar !== 'string' || !body.komentar.trim()) fields.komentar = 'Komentar wajib diisi.';
+    else if (body.komentar.trim().length > 1000) fields.komentar = 'Komentar maksimal 1000 karakter.';
+    else komentar = body.komentar.trim();
+    if (Object.keys(fields).length) fail422('Ulasan belum dapat disimpan. Periksa kembali isian Anda.', fields);
+
+    const saved = tx(db, () => {
+      if (!db.prepare('SELECT id FROM tempat WHERE id=?').get(tempatId)) throw new ApiError(404, 'NOT_FOUND', 'Tempat tidak ditemukan.');
+      const now = new Date().toISOString();
+      db.prepare(`INSERT INTO ulasan(tempat_id,user_id,rating,komentar,dibuat_pada,diperbarui_pada)
+        VALUES(?,?,?,?,?,?)
+        ON CONFLICT(tempat_id,user_id) DO UPDATE SET
+          rating=excluded.rating,komentar=excluded.komentar,diperbarui_pada=excluded.diperbarui_pada`)
+        .run(tempatId, user.id, body.rating, komentar, now, now);
+      return db.prepare(`SELECT r.id,r.rating,r.komentar,r.dibuat_pada,r.diperbarui_pada,u.nama AS nama_pengguna
+        FROM ulasan r JOIN users u ON u.id=r.user_id WHERE r.tempat_id=? AND r.user_id=?`).get(tempatId, user.id);
+    });
+    sendJson(res, 200, success('Ulasan berhasil disimpan.', reviewOut(saved)));
   };
 
   function validateKontribusi(b) {
@@ -329,6 +390,9 @@ function createApp({ db, jwtSecret, jwtTtl = 28800, corsOrigin = '*', uploadDir 
     R('POST', /^\/api\/v1\/auth\/register$/, null, registerUser),
     R('POST', /^\/api\/v1\/auth\/login$/, null, login),
     R('GET', /^\/api\/v1\/tempat$/, null, listTempat),
+    R('GET', /^\/api\/v1\/tempat\/(\d+)\/ulasan$/, null, listUlasan),
+    R('GET', /^\/api\/v1\/tempat\/(\d+)\/ulasan\/saya$/, 'ANY', getUlasanSaya),
+    R('PUT', /^\/api\/v1\/tempat\/(\d+)\/ulasan$/, 'ANY', saveUlasan),
     R('GET', /^\/api\/v1\/tempat\/(\d+)$/, null, getTempat),
     R('POST', /^\/api\/v1\/upload\/speedtest$/, 'ANY', uploadSpeedtest),
     R('GET', /^\/api\/v1\/uploads\/speedtest\/([0-9a-f-]{36})\.(jpg|png|webp)$/, null, getSpeedtest),
@@ -345,7 +409,7 @@ function createApp({ db, jwtSecret, jwtTtl = 28800, corsOrigin = '*', uploadDir 
     res.writeHead = (s, h) => origWrite(s, { ...cors, ...h });
     try {
       if (req.method === 'OPTIONS') {
-        res.writeHead(204, { 'Access-Control-Allow-Methods': 'GET,POST,PATCH,OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type,Authorization,Idempotency-Key',
+        res.writeHead(204, { 'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type,Authorization,Idempotency-Key',
           'Access-Control-Expose-Headers': 'Idempotency-Replayed', 'Access-Control-Max-Age': '600' });
         return res.end();
       }

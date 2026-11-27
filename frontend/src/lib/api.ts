@@ -1,5 +1,5 @@
 import { AUTH_SESSION_EVENT, clearSession, getSession } from './session';
-import type { ApiEnvelope, AuthResponse, Contribution, InclusiveFacility, OtherFacility, Place, User } from '../types';
+import type { ApiEnvelope, AuthResponse, Contribution, InclusiveFacility, OtherFacility, Place, PlaceReview, PlaceReviewsResponse, User } from '../types';
 import { ApiRequestError } from '../types';
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? 'http://localhost:3000/api/v1';
@@ -71,6 +71,22 @@ export function getPlaces(params: { q?: string; colokan_min?: number; noise?: st
 
 export function getPlace(id: number) {
   return request<Place>(`/tempat/${id}`);
+}
+
+export function getPlaceReviews(id: number, page = 1) {
+  const query = new URLSearchParams({ page: String(page), limit: '10' });
+  return request<PlaceReviewsResponse>(`/tempat/${id}/ulasan?${query.toString()}`);
+}
+
+export function getMyPlaceReview(id: number) {
+  return request<PlaceReview | null>(`/tempat/${id}/ulasan/saya`);
+}
+
+export function savePlaceReview(id: number, data: { rating: number; komentar: string }) {
+  return request<PlaceReview>(`/tempat/${id}/ulasan`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });
 }
 
 export function createContribution(data: {

@@ -82,6 +82,8 @@ npm run build
 | POST   | `/api/v1/auth/login`           | –       | Login, dapat JWT             |
 | GET    | `/api/v1/tempat`               | –       | Daftar tempat (dengan filter)|
 | GET    | `/api/v1/tempat/:id`           | –       | Detail satu tempat           |
+| GET    | `/api/v1/tempat/:id/ulasan`    | –       | Daftar ulasan dan rating      |
+| PUT    | `/api/v1/tempat/:id/ulasan`    | User    | Tulis/perbarui ulasan kafe    |
 | POST   | `/api/v1/upload/speedtest`     | User    | Upload foto speedtest        |
 | POST   | `/api/v1/kontribusi`           | User    | Kirim kontribusi tempat baru |
 | GET    | `/api/v1/kontribusi/saya`      | User    | Status kontribusi saya       |

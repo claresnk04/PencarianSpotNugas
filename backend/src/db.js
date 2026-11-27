@@ -25,7 +25,14 @@ function openDb(file) {
   CREATE INDEX IF NOT EXISTS ix_kontribusi_status ON kontribusi(status, dikirim_pada, id);
   CREATE TABLE IF NOT EXISTS idempotency(
     key TEXT NOT NULL, user_id INTEGER NOT NULL, fingerprint TEXT NOT NULL,
-    kontribusi_id INTEGER NOT NULL REFERENCES kontribusi(id), created_at TEXT NOT NULL, PRIMARY KEY(key, user_id));`);
+    kontribusi_id INTEGER NOT NULL REFERENCES kontribusi(id), created_at TEXT NOT NULL, PRIMARY KEY(key, user_id));
+  CREATE TABLE IF NOT EXISTS ulasan(
+    id INTEGER PRIMARY KEY, tempat_id INTEGER NOT NULL REFERENCES tempat(id) ON DELETE CASCADE,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    rating INTEGER NOT NULL CHECK(rating BETWEEN 1 AND 5), komentar TEXT NOT NULL,
+    dibuat_pada TEXT NOT NULL, diperbarui_pada TEXT NOT NULL,
+    UNIQUE(tempat_id, user_id));
+  CREATE INDEX IF NOT EXISTS ix_ulasan_tempat ON ulasan(tempat_id, diperbarui_pada DESC, id DESC);`);
   // Migrasi ringan untuk database lama yang dibuat sebelum field fasilitas tersedia.
   const additions = {
     tempat: ['fasilitas_inklusif TEXT', 'wifi INTEGER CHECK(wifi IN (0,1))', 'fasilitas_lainnya TEXT', 'foto_speedtest TEXT'],

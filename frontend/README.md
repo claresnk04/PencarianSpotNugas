@@ -19,6 +19,7 @@ Untuk build produksi, set `VITE_API_BASE` ke URL API publik ber-HTTPS sebelum me
 - Pencarian, filter colokan, suasana, WiFi, dan fasilitas lainnya
 - Peta Leaflet/OpenStreetMap
 - Detail tempat dan state loading/empty/error
+- Rating 1–5 dan komentar pada detail kafe; pengguna login dapat menulis atau memperbarui satu ulasan per kafe
 - Login JWT
 - Kontribusi tempat dengan Idempotency-Key
 - Fasilitas inklusif multi-pilihan pada kontribusi dan detail tempat
