@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: snij-backend
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "22.13.0"
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: "*"
+      - key: SEED_ADMIN_EMAIL
+        value: "admin@snij.id"
+      - key: SEED_ADMIN_PASSWORD
+        value: "AdminSnij2026!"
+      - key: SEED_USER_EMAIL
+        value: "user@snij.id"
+      - key: SEED_USER_PASSWORD
+        value: "UserSnij2026!"
+      - key: SEED_DEMO_TEMPAT
+        value: "true"

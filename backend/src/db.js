@@ -60,11 +60,26 @@ function seed(db, o = {}) {
   }
   if (o.demoTempat === true && db.prepare('SELECT COUNT(*) c FROM tempat').get().c === 0) {
     const now = new Date().toISOString();
-    const ins = db.prepare('INSERT INTO tempat(nama_tempat,alamat,lat,lng,colokan_min,noise_level,diperbarui_pada) VALUES(?,?,?,?,?,?,?)');
-    [['Kafe Demo Gejayan', 'Jl. Contoh No. 1', -7.775, 110.39, 90, 'Hening'], ['Perpustakaan Demo Kampus', 'Jl. Contoh No. 2', -7.77, 110.38, 70, 'Hening'],
-     ['Kopi Demo Sudut', 'Jl. Contoh No. 3', -7.78, 110.4, 70, 'Sedang'], ['Co-working Demo', 'Jl. Contoh No. 4', -7.76, 110.37, 100, 'Sedang'],
-     ['Warung Demo Nugas', 'Jl. Contoh No. 5', -7.79, 110.41, 40, 'Ramai'], ['Kafe Demo Cafe Mlati', 'Jl. Contoh No. 6', -7.74, 110.35, 70, 'Hening'],
-     ['Taman Baca Demo', 'Jl. Contoh No. 7', -7.77, 110.36, 70, 'Hening'], ['Cafe Demo Seturan', 'Jl. Contoh No. 8', -7.76, 110.42, 70, 'Hening']
+    const ins = db.prepare('INSERT INTO tempat(nama_tempat,alamat,lat,lng,colokan_min,noise_level,fasilitas_inklusif,wifi,fasilitas_lainnya,diperbarui_pada) VALUES(?,?,?,?,?,?,?,?,?,?)');
+    [
+      ['Kopi Nako Seturan', 'Jl. Seturan Raya No.15, Depok, Sleman', -7.7694, 110.392, 85, 'Hening', '["Akses kursi roda","Ruang ibadah"]', 1, '["AC","Toilet","Parkir","Mushola","Ruang non-smoking"]'],
+      ['Filosofi Kopi Jogja', 'Jl. Wahid Hasyim No.4, Gondokusuman, Kota Yogyakarta', -7.7891, 110.3709, 60, 'Sedang', null, 1, '["AC","Toilet","Parkir"]'],
+      ['Kopinus UNY', 'Jl. Colombo No.1, Karangmalang, Depok, Sleman', -7.7722, 110.3867, 50, 'Sedang', '["Akses kursi roda","Ruang ibadah"]', 1, '["Toilet","Parkir","Mushola","Ruang non-smoking"]'],
+      ['Nongkrong Coffee & Space', 'Jl. Babarsari No.6, Depok, Sleman', -7.7759, 110.4043, 95, 'Hening', '["Akses kursi roda","Ruang ibadah"]', 1, '["AC","Toilet","Parkir","Mushola","Area outdoor","Ruang non-smoking"]'],
+      ['Warung Kopi Jos 24 Jam', 'Jl. Pasar Kembang No.7, Gedongtengen, Kota Yogyakarta', -7.7951, 110.3641, 30, 'Ramai', null, 1, '["Toilet","Parkir"]'],
+      ['Kedai Pintar Condongcatur', 'Jl. Anggajaya II No.3, Condongcatur, Depok, Sleman', -7.7489, 110.3981, 78, 'Hening', '["Ruang ibadah"]', 1, '["AC","Toilet","Parkir","Mushola","Ruang non-smoking"]'],
+      ['Perpustakaan Kota Yogyakarta', 'Jl. Suroto No.9, Kotabaru, Gondokusuman, Kota Yogyakarta', -7.7811, 110.3766, 40, 'Hening', '["Akses kursi roda","Ruang ibadah"]', 1, '["AC","Toilet","Parkir","Mushola","Ruang non-smoking"]'],
+      ['Doppio Coffee Kaliurang', 'Jl. Kaliurang KM 5.5, Sleman', -7.751, 110.3869, 70, 'Sedang', null, 1, '["AC","Toilet","Parkir"]'],
+      ['Study Room FT UNY', 'Gedung Dekanat FT UNY, Karangmalang, Depok, Sleman', -7.7728, 110.3852, 90, 'Hening', '["Akses kursi roda","Ruang ibadah"]', 1, '["AC","Toilet","Parkir","Mushola","Ruang non-smoking"]'],
+      ['Satu Ruang Co-working', 'Jl. Perumnas Condongcatur Blok B No.12, Depok, Sleman', -7.7466, 110.4012, 100, 'Hening', '["Akses kursi roda","Ruang ibadah"]', 1, '["AC","Toilet","Parkir","Mushola","Ruang non-smoking"]'],
+      ['Taman Pintar Learning Center', 'Jl. Panembahan Senopati No.1-3, Prawirodirjan, Gondomanan', -7.8002, 110.3645, 35, 'Sedang', '["Akses kursi roda","Ruang ibadah"]', 1, '["AC","Toilet","Parkir","Mushola","Ruang non-smoking"]'],
+      ['Kafe Buku Sleman', 'Jl. Palagan Tentara Pelajar No.22, Sleman', -7.7358, 110.37, 65, 'Hening', null, 1, '["AC","Toilet","Parkir","Area outdoor","Ruang non-smoking"]'],
+      ['Ruang Bersama Kotabaru', 'Jl. Diponegoro No.48, Kotabaru, Gondokusuman', -7.7843, 110.3755, 88, 'Hening', '["Akses kursi roda","Ruang ibadah"]', 1, '["AC","Toilet","Parkir","Mushola","Ruang non-smoking"]'],
+      ['Angkringan WiFi Gedongkiwo', 'Jl. Gedongkiwo, Mantrijeron, Kota Yogyakarta', -7.8105, 110.3665, 20, 'Ramai', null, 1, '["Toilet","Parkir"]'],
+      ['Laboratorium Terbuka UKDW', 'Jl. Dr. Wahidin Sudirohusodo No.5-25, Gondokusuman', -7.7858, 110.372, 80, 'Hening', '["Akses kursi roda"]', 1, '["AC","Toilet","Parkir","Ruang non-smoking"]'],
+      ['Brew + Code Babarsari', 'Jl. Babarsari No.20, Caturtunggal, Depok, Sleman', -7.7741, 110.406, 92, 'Hening', '["Ruang ibadah"]', 1, '["AC","Toilet","Parkir","Mushola","Area outdoor","Ruang non-smoking"]'],
+      ['Pantai Timur Food Court', 'Jl. Ring Road Utara, Ngaglik, Sleman', -7.7387, 110.395, 25, 'Ramai', '["Akses kursi roda","Ruang ibadah"]', 1, '["Toilet","Parkir","Mushola"]'],
+      ['Kebon Klengkeng Cafe', 'Jl. Kledokan, Caturtunggal, Depok, Sleman', -7.7709, 110.3997, 72, 'Sedang', null, 1, '["Toilet","Parkir","Area outdoor","Ruang non-smoking"]']
     ].forEach((r) => ins.run(...r, now));
   }
 }
