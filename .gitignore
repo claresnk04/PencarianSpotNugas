@@ -9,6 +9,7 @@ frontend/node_modules/
 
 # Databases / runtime data
 backend/data/
+backend/uploads/
 *.sqlite
 *.db
 

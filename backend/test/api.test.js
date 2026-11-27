@@ -2,10 +2,14 @@
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('node:http');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const { DatabaseSync } = require('node:sqlite');
 const { openDb, seed } = require('../src/db');
 const { createApp } = require('../src/app');
 
-let server, base, db, admin, user;
+let server, base, db, admin, user, uploadDir;
 const call = async (method, path, { token, body, headers = {} } = {}) => {
   const r = await fetch(base + path, { method, headers: { ...(body ? { 'Content-Type': 'application/json' } : {}), ...(token ? { Authorization: `Bearer ${token}` } : {}), ...headers }, body: body ? JSON.stringify(body) : undefined });
   const text = await r.text(); return { status: r.status, headers: r.headers, json: text ? JSON.parse(text) : null };
@@ -16,12 +20,33 @@ const valid = (o = {}) => ({ nama_tempat: 'Kafe Sudut Gejayan', colokan_min: 85,
 const assertErr = (r, status, code) => { assert.equal(r.status, status); assert.equal(r.json.status, 'ERROR'); assert.equal(r.json.code, code); assert.ok(r.json.message); assert.ok(r.json.error && typeof r.json.error.fields === 'object'); assert.ok(!/stack|at Object|node:/.test(JSON.stringify(r.json))); };
 
 before(async () => {
+  uploadDir = fs.mkdtempSync(path.join(os.tmpdir(), 'snij-upload-test-'));
   db = openDb(':memory:'); seed(db, { adminEmail: 'admin@snij.test', adminPassword: 'Admin123!', userEmail: 'user@snij.test', userPassword: 'User123!', demoTempat: true });
-  server = http.createServer(createApp({ db, jwtSecret: 'x'.repeat(40) }));
+  server = http.createServer(createApp({ db, jwtSecret: 'x'.repeat(40), uploadDir }));
   await new Promise((r) => server.listen(0, r)); base = `http://127.0.0.1:${server.address().port}`;
   admin = await login('admin@snij.test', 'Admin123!'); user = await login('user@snij.test', 'User123!');
 });
-after(() => { server.close(); db.close(); });
+after(() => { server.close(); db.close(); fs.rmSync(uploadDir, { recursive: true, force: true }); });
+
+test('database lama dimigrasikan untuk fasilitas WiFi, pilihan lain, dan foto', () => {
+  const file = path.join(uploadDir, 'legacy.sqlite');
+  const legacy = new DatabaseSync(file);
+  legacy.exec(`
+    CREATE TABLE users(id INTEGER PRIMARY KEY, email TEXT NOT NULL UNIQUE, nama TEXT NOT NULL, password_hash TEXT NOT NULL, role TEXT NOT NULL);
+    CREATE TABLE tempat(id INTEGER PRIMARY KEY, nama_tempat TEXT NOT NULL, alamat TEXT, lat REAL, lng REAL, colokan_min INTEGER, noise_level TEXT, kontribusi_id INTEGER, diperbarui_pada TEXT NOT NULL);
+    CREATE TABLE kontribusi(id INTEGER PRIMARY KEY, nama_tempat TEXT NOT NULL, alamat TEXT, lat REAL, lng REAL, colokan_min INTEGER, noise_level TEXT, status TEXT NOT NULL, catatan_admin TEXT, user_id INTEGER NOT NULL, dikirim_pada TEXT NOT NULL, diproses_oleh INTEGER, diproses_pada TEXT, deleted_at TEXT);
+    CREATE TABLE idempotency(key TEXT NOT NULL, user_id INTEGER NOT NULL, fingerprint TEXT NOT NULL, kontribusi_id INTEGER NOT NULL, created_at TEXT NOT NULL, PRIMARY KEY(key,user_id));
+  `);
+  legacy.close();
+  const migrated = openDb(file);
+  for (const table of ['tempat', 'kontribusi']) {
+    const columns = migrated.prepare(`PRAGMA table_info(${table})`).all().map((column) => column.name);
+    assert.ok(columns.includes('wifi'));
+    assert.ok(columns.includes('fasilitas_lainnya'));
+    assert.ok(columns.includes('foto_speedtest'));
+  }
+  migrated.close();
+});
 
 test('login: sukses (USER & ADMIN), salah sandi 401, field kosong 422', async () => {
   const a = await call('POST', '/api/v1/auth/login', { body: { email: 'admin@snij.test', password: 'Admin123!' } });
@@ -37,6 +62,68 @@ test('register: USER baru, validasi password, email duplikat, lalu login', async
   assertErr(await call('POST', '/api/v1/auth/register', { body: { nama: 'Lain', email: 'baru@snij.test', password: 'Rahasia123' } }), 409, 'STATE_CONFLICT');
   const invalid = await call('POST', '/api/v1/auth/register', { body: { nama: 'A', email: 'bukan-email', password: 'pendek' } });
   assertErr(invalid, 422, 'VALIDATION_ERROR'); assert.ok(invalid.json.error.fields.email && invalid.json.error.fields.password);
+});
+
+test('status kontribusi: hanya data milik user dan wajib login', async () => {
+  const created = await call('POST', '/api/v1/kontribusi', { token: user, body: valid({ nama_tempat: 'Kafe Status Saya' }) });
+  const own = await call('GET', '/api/v1/kontribusi/saya', { token: user });
+  assert.equal(own.status, 200); assert.ok(own.json.data.some((item) => item.id === created.json.data.id));
+  assert.ok(own.json.data.every((item) => !('user_id' in item)));
+  assertErr(await call('GET', '/api/v1/kontribusi/saya'), 401, 'UNAUTHORIZED');
+});
+
+test('fasilitas inklusif: disimpan, dikembalikan, dan divalidasi', async () => {
+  const facilities = ['Akses kursi roda', 'Toilet aksesibel', 'Ruang laktasi'];
+  const created = await call('POST', '/api/v1/kontribusi', { token: user, body: valid({ nama_tempat: 'Kafe Inklusif', fasilitas_inklusif: facilities }) });
+  assert.equal(created.status, 201); assert.deepEqual(created.json.data.fasilitas_inklusif, facilities);
+  const approved = await call('PATCH', `/api/v1/admin/antrean/${created.json.data.id}`, { token: admin, body: { status: 'APPROVED' } });
+  assert.equal(approved.status, 200);
+  const place = (await call('GET', '/api/v1/tempat?q=Kafe Inklusif')).json.data[0];
+  assert.deepEqual(place.fasilitas_inklusif, facilities);
+  assertErr(await call('POST', '/api/v1/kontribusi', { token: user, body: valid({ fasilitas_inklusif: ['Fasilitas tidak dikenal'] }) }), 422, 'VALIDATION_ERROR');
+});
+
+test('upload speedtest, filter WiFi/fasilitas, dan publikasi foto saat disetujui', async () => {
+  const png = Buffer.from('iVBORw0KGgo=', 'base64');
+  assertErr(await call('POST', '/api/v1/upload/speedtest', {
+    body: { mime_type: 'image/png', data: png.toString('base64') },
+  }), 401, 'UNAUTHORIZED');
+  const uploaded = await call('POST', '/api/v1/upload/speedtest', {
+    token: user,
+    body: { mime_type: 'image/png', data: png.toString('base64') },
+  });
+  assert.equal(uploaded.status, 201);
+  const photoPath = uploaded.json.data.foto_speedtest;
+  const image = await fetch(`${base}${photoPath}`);
+  assert.equal(image.status, 200);
+  assert.equal(image.headers.get('content-type'), 'image/png');
+  assert.deepEqual(Buffer.from(await image.arrayBuffer()), png);
+
+  const created = await call('POST', '/api/v1/kontribusi', {
+    token: user,
+    body: valid({ nama_tempat: 'Kafe Filter Fasilitas', wifi: true, fasilitas_lainnya: ['AC', 'Parkir'], foto_speedtest: photoPath }),
+  });
+  assert.equal(created.status, 201);
+  assert.equal(created.json.data.wifi, true);
+  assert.deepEqual(created.json.data.fasilitas_lainnya, ['AC', 'Parkir']);
+  assert.equal(created.json.data.foto_speedtest, photoPath);
+  assert.equal((await call('PATCH', `/api/v1/admin/antrean/${created.json.data.id}`, { token: admin, body: { status: 'APPROVED' } })).status, 200);
+
+  const filtered = await call('GET', '/api/v1/tempat?wifi=true&fasilitas=AC,Parkir');
+  assert.equal(filtered.status, 200);
+  assert.equal(filtered.json.data.length, 1);
+  assert.equal(filtered.json.data[0].foto_speedtest, photoPath);
+  assertErr(await call('GET', '/api/v1/tempat?wifi=maybe'), 422, 'VALIDATION_ERROR');
+  assertErr(await call('GET', '/api/v1/tempat?fasilitas=Unknown'), 422, 'VALIDATION_ERROR');
+  assertErr(await call('POST', '/api/v1/upload/speedtest', {
+    token: user,
+    body: { mime_type: 'image/png', data: Buffer.from('not image').toString('base64') },
+  }), 422, 'VALIDATION_ERROR');
+  const oversizedPng = Buffer.concat([png, Buffer.alloc(3 * 1024 * 1024 - png.length + 1)]);
+  assertErr(await call('POST', '/api/v1/upload/speedtest', {
+    token: user,
+    body: { mime_type: 'image/png', data: oversizedPng.toString('base64') },
+  }), 422, 'VALIDATION_ERROR');
 });
 
 test('T01 CRUD valid: POST 201 PENDING -> muncul di antrean -> PATCH APPROVED 200 -> tampil publik', async () => {

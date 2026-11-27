@@ -10,7 +10,38 @@ export interface User {
 export interface Session {
   token: string;
   user: User;
+  expiresAt?: number;
 }
+
+export interface AuthResponse {
+  token: string;
+  token_type?: string;
+  expires_in?: number;
+  user: User;
+}
+
+export const INCLUSIVE_FACILITIES = [
+  'Akses kursi roda',
+  'Toilet aksesibel',
+  'Parkir disabilitas',
+  'Jalur pemandu',
+  'Ruang laktasi',
+  'Ruang ibadah',
+  'Area ramah anak',
+] as const;
+
+export type InclusiveFacility = typeof INCLUSIVE_FACILITIES[number];
+
+export const OTHER_FACILITIES = [
+  'AC',
+  'Toilet',
+  'Parkir',
+  'Mushola',
+  'Area outdoor',
+  'Ruang non-smoking',
+] as const;
+
+export type OtherFacility = typeof OTHER_FACILITIES[number];
 
 export interface Place {
   id: number;
@@ -20,6 +51,10 @@ export interface Place {
   lng: number | null;
   colokan_min: number | null;
   noise_level: 'Hening' | 'Sedang' | 'Ramai' | null;
+  fasilitas_inklusif: InclusiveFacility[] | null;
+  wifi: boolean | null;
+  fasilitas_lainnya: OtherFacility[] | null;
+  foto_speedtest: string | null;
   diperbarui_pada?: string;
 }
 
@@ -31,9 +66,14 @@ export interface Contribution {
   lng: number | null;
   colokan_min: number | null;
   noise_level: Place['noise_level'];
+  fasilitas_inklusif: InclusiveFacility[] | null;
+  wifi: Place['wifi'];
+  fasilitas_lainnya: OtherFacility[] | null;
+  foto_speedtest: string | null;
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'REVISION_NEEDED';
   catatan_admin: string | null;
   dikirim_pada: string;
+  diproses_pada?: string | null;
   kontributor?: string;
 }
 

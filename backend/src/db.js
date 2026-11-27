@@ -12,11 +12,13 @@ function openDb(file) {
     password_hash TEXT NOT NULL, role TEXT NOT NULL CHECK(role IN ('USER','ADMIN')));
   CREATE TABLE IF NOT EXISTS tempat(
     id INTEGER PRIMARY KEY, nama_tempat TEXT NOT NULL, alamat TEXT, lat REAL, lng REAL,
-    colokan_min INTEGER CHECK(colokan_min BETWEEN 0 AND 100), noise_level TEXT CHECK(noise_level IN ('Hening','Sedang','Ramai')),
+    colokan_min INTEGER CHECK(colokan_min BETWEEN 0 AND 100), noise_level TEXT CHECK(noise_level IN ('Hening','Sedang','Ramai')), fasilitas_inklusif TEXT,
+    wifi INTEGER CHECK(wifi IN (0,1)), fasilitas_lainnya TEXT, foto_speedtest TEXT,
     kontribusi_id INTEGER, diperbarui_pada TEXT NOT NULL);
   CREATE TABLE IF NOT EXISTS kontribusi(
     id INTEGER PRIMARY KEY, nama_tempat TEXT NOT NULL, alamat TEXT, lat REAL, lng REAL,
-    colokan_min INTEGER CHECK(colokan_min BETWEEN 0 AND 100), noise_level TEXT CHECK(noise_level IN ('Hening','Sedang','Ramai')),
+    colokan_min INTEGER CHECK(colokan_min BETWEEN 0 AND 100), noise_level TEXT CHECK(noise_level IN ('Hening','Sedang','Ramai')), fasilitas_inklusif TEXT,
+    wifi INTEGER CHECK(wifi IN (0,1)), fasilitas_lainnya TEXT, foto_speedtest TEXT,
     status TEXT NOT NULL DEFAULT 'PENDING' CHECK(status IN ('PENDING','APPROVED','REJECTED','REVISION_NEEDED')),
     catatan_admin TEXT, user_id INTEGER NOT NULL REFERENCES users(id),
     dikirim_pada TEXT NOT NULL, diproses_oleh INTEGER REFERENCES users(id), diproses_pada TEXT, deleted_at TEXT);
@@ -24,6 +26,18 @@ function openDb(file) {
   CREATE TABLE IF NOT EXISTS idempotency(
     key TEXT NOT NULL, user_id INTEGER NOT NULL, fingerprint TEXT NOT NULL,
     kontribusi_id INTEGER NOT NULL REFERENCES kontribusi(id), created_at TEXT NOT NULL, PRIMARY KEY(key, user_id));`);
+  // Migrasi ringan untuk database lama yang dibuat sebelum field fasilitas tersedia.
+  const additions = {
+    tempat: ['fasilitas_inklusif TEXT', 'wifi INTEGER CHECK(wifi IN (0,1))', 'fasilitas_lainnya TEXT', 'foto_speedtest TEXT'],
+    kontribusi: ['fasilitas_inklusif TEXT', 'wifi INTEGER CHECK(wifi IN (0,1))', 'fasilitas_lainnya TEXT', 'foto_speedtest TEXT'],
+  };
+  for (const [table, definitions] of Object.entries(additions)) {
+    const columns = db.prepare(`PRAGMA table_info(${table})`).all();
+    for (const definition of definitions) {
+      const name = definition.split(' ')[0];
+      if (!columns.some((column) => column.name === name)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${definition}`);
+    }
+  }
   return db;
 }
 /** Transaksi atomik; BEGIN IMMEDIATE mengunci tulis sehingga cek-status + update tidak bisa disela request lain. */

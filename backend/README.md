@@ -3,14 +3,15 @@
 REST API **tanpa dependensi eksternal**: hanya Node.js ≥ 22.13 (`node:http`, `node:sqlite`, `node:crypto`).
 JWT HS256 dan hash password (scrypt) memakai `node:crypto`. Database: SQLite (file), transaksi atomik.
 
-## Menjalankan
+## Pengembangan lokal
 ```bash
-cp .env.example .env                  # isi JWT_SECRET (>= 32 karakter)
-export $(grep -v '^#' .env | xargs)   # atau set variabel lingkungan dengan cara lain
-npm start                             # http://localhost:3000
-npm test                              # test otomatis API
+cd backend
+npm start
+npm test
 ```
-Akun awal bersifat opsional dan hanya dibuat bila pasangan `SEED_*` diisi. Jangan memakai kredensial demo di produksi.
+Salin `.env.example` menjadi `.env` bila perlu mengubah konfigurasi. Pada PowerShell: `Copy-Item .env.example .env`. Akun awal bersifat opsional dan hanya dibuat bila pasangan `SEED_*` diisi. Jangan memakai kredensial demo di produksi.
+
+Memerlukan Node.js **22.13+**. Server API berjalan di `http://localhost:3000`; database dan foto di direktori `data/` dan `uploads/`.
 
 ## Format respons
 Sukses: `{"status":"SUCCESS","message":"...","data":...,"meta":{page,limit,total,total_pages}}`
@@ -25,9 +26,15 @@ Kode: `VALIDATION_ERROR` 422 · `UNAUTHORIZED` 401 · `FORBIDDEN` 403 · `STATE_
 |---|---|---|
 | `POST /api/v1/auth/register` | publik | body `{nama,email,password}` → akun baru ber-role USER. Password 8–128 karakter, wajib mengandung huruf dan angka. 201 / 409 / 422 |
 | `POST /api/v1/auth/login` | publik | body `{email,password}` → `data.token` (JWT, role USER/ADMIN). Gagal: 401; kosong: 422; >10 gagal/15 mnt: 429 |
-| `GET /api/v1/tempat` | publik | query: `q`(2–60), `colokan_min`(0–100), `noise`(Hening,Sedang,Ramai; boleh koma), `sort`(diperbarui_pada,colokan_min,nama_tempat), `order`, `page`, `limit`(1–100, default 20). Tidak ada hasil → **200 `data: []`**; parameter salah → **422** |
+| `GET /api/v1/tempat` | publik | query: `q`(2–60), `colokan_min`(0–100), `noise`(Hening,Sedang,Ramai; boleh koma), `wifi`(true/false), `fasilitas`(pilihan koma-terpisah), `sort`(diperbarui_pada,colokan_min,nama_tempat), `order`, `page`, `limit`(1–100, default 20). Filter fasilitas bersifat AND. Tidak ada hasil → **200 `data: []`**; parameter salah → **422** |
 | `GET /api/v1/tempat/:id` | publik | 200 / 404 |
-| `POST /api/v1/kontribusi` | token (USER/ADMIN) | `nama_tempat` wajib; `colokan_min` 0–100 (alias `persen_colokan`); opsional `noise_level`, `alamat`, `lat`+`lng`. Header `Idempotency-Key` (8–128 karakter, disarankan UUID). Status dipaksa `PENDING`; `id/status/dikirim_pada/catatan_admin` dari klien diabaikan. 201 / 401 / 422 / 409 |
+| `POST /api/v1/upload/speedtest` | token (USER/ADMIN) | JSON `{mime_type,data}` dengan `data` base64. JPEG/PNG/WebP, maksimal 3 MiB. Mengembalikan path `foto_speedtest` untuk disertakan pada kontribusi. 201 / 401 / 422 / 413 |
+| `GET /api/v1/uploads/speedtest/:id.:ext` | publik | Mengambil foto speedtest tersimpan; hanya id acak dan ekstensi JPG/PNG/WebP yang diterima. 200 / 404 |
+| `POST /api/v1/kontribusi` | token (USER/ADMIN) | `nama_tempat` wajib; `colokan_min` 0–100 (alias `persen_colokan`); opsional `noise_level`, `fasilitas_inklusif` (array pilihan), `wifi` (boolean), `fasilitas_lainnya` (array pilihan), `foto_speedtest` (path hasil upload), `alamat`, `lat`+`lng`. Header `Idempotency-Key` (8–128 karakter, disarankan UUID). Status dipaksa `PENDING`; `id/status/dikirim_pada/catatan_admin` dari klien diabaikan. 201 / 401 / 422 / 409 |
+| `GET /api/v1/kontribusi/saya` | token (USER/ADMIN) | Daftar status kontribusi milik user yang sedang login. Mendukung `status`, `page`, dan `limit`. |
+
+Nilai `fasilitas_inklusif` yang didukung: `Akses kursi roda`, `Toilet aksesibel`, `Parkir disabilitas`, `Jalur pemandu`, `Ruang laktasi`, `Ruang ibadah`, dan `Area ramah anak`.
+Nilai `fasilitas_lainnya`: `AC`, `Toilet`, `Parkir`, `Mushola`, `Area outdoor`, dan `Ruang non-smoking`. Skema lama dimigrasikan ringan saat server mulai.
 | `GET /api/v1/admin/antrean` | ADMIN | `status` (default PENDING), `q`, `order`, `page`, `limit`. 401 / 403 / 422 |
 | `PATCH /api/v1/admin/antrean/:id` | ADMIN | body `{status, catatan_admin}` saja. `REJECTED` wajib catatan → 422. Hanya `PENDING → APPROVED/REJECTED/REVISION_NEEDED`; selain itu (mis. APPROVED→PENDING, atau sudah diubah admin lain) → **409 STATE_CONFLICT**. Saat APPROVED, tempat masuk ke `GET /tempat` (BR-01) |
 
@@ -38,6 +45,23 @@ Urutan pemeriksaan: 401 → 403 → validasi body (422) → 404 → transisi sta
 - **Idempotency:** kunci berlaku per user. Kunci sama + data sama → record yang sama (header `Idempotency-Replayed: true`, tidak ada record baru). Kunci sama + data beda → 409. Request yang gagal validasi tidak memakai kunci.
 - **Role** dibaca dari database pada tiap request, bukan dari klaim token.
 - **SQL injection:** semua query berparameter; `sort` memakai whitelist.
+- Foto diperiksa berdasarkan tipe MIME dan signature file, dibatasi 3 MiB, diberi nama UUID, dan disimpan di `UPLOAD_DIR` (default `backend/uploads`). Simpan direktori ini bersama `DB_FILE` saat backup dan gunakan storage persisten.
+
+## Konfigurasi produksi
+
+Set `NODE_ENV=production`, `JWT_SECRET` acak minimal 32 karakter, `CORS_ORIGIN` ke origin frontend yang tepat (bukan `*`), `DB_FILE` ke lokasi database persisten, dan `UPLOAD_DIR` ke lokasi file persisten. Atur juga `PORT` dan `JWT_TTL_SECONDS` sesuai kebutuhan. Server akan menolak secret yang lemah, CORS wildcard/kosong, port tidak valid, serta masa token di bawah 60 detik. Jangan masukkan `.env` atau kredensial seed ke Git.
+
+Contoh PowerShell sebelum menjalankan API:
+```powershell
+$env:NODE_ENV = "production"
+$env:JWT_SECRET = "<secret-acak-minimal-32-karakter>"
+$env:CORS_ORIGIN = "https://snij.example.com"
+$env:DB_FILE = "D:\snij-data\snij.db"
+$env:UPLOAD_DIR = "D:\snij-data\uploads"
+npm start
+```
+
+Jalankan di belakang reverse proxy HTTPS dan arahkan `/api` ke API; sajikan build frontend secara terpisah dengan `VITE_API_BASE` menunjuk ke URL HTTPS API. Pastikan reverse proxy mengizinkan request upload hingga setidaknya 4.1 MiB (payload JSON base64 untuk gambar 3 MiB). Login rate limit saat ini in-memory per proses; gunakan gateway/proxy dengan rate limiting untuk deployment multi-instance.
 
 ## Pemetaan pengujian
 | ID | Dibuktikan oleh |
@@ -55,7 +79,5 @@ Urutan pemeriksaan: 401 → 403 → validasi body (422) → 404 → transisi sta
 
 Untuk bukti laporan, jalankan skenario yang sama lewat Postman/Network tab dan ambil screenshot; hasil `npm test` bukan pengganti bukti tersebut.
 
-## Batasan yang disengaja
-- **Upload foto speedtest (multipart) belum ada** → request multipart dijawab 415. Body: JSON atau `x-www-form-urlencoded`.
+## Batasan
 - Tidak ada DELETE (tidak diminta di spesifikasi ini) maupun refresh token. Logout dilakukan dengan menghapus token di sisi frontend.
-- Rate limit login hanya in-memory (per proses). Untuk produksi pasang HTTPS/reverse proxy di depan server ini.

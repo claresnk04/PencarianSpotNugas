@@ -8,7 +8,9 @@ import type { Session, Toast } from '../types';
 export function LoginPage({ onLogin, notify }: { onLogin: (session: Session) => void; notify: (message: string, type?: Toast['type']) => void }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const registeredEmail = (location.state as { email?: string } | null)?.email ?? '';
+  const loginState = location.state as { email?: string; reason?: string } | null;
+  const registeredEmail = loginState?.email ?? '';
+  const sessionExpired = loginState?.reason === 'expired';
   const [email, setEmail] = useState(registeredEmail);
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -16,12 +18,12 @@ export function LoginPage({ onLogin, notify }: { onLogin: (session: Session) => 
 
   const submit = async (event: FormEvent) => {
     event.preventDefault(); setLoading(true); setError('');
-    try { const result = await login(email, password); onLogin(result.data); notify(`Selamat datang, ${result.data.user.nama}.`, 'success'); navigate(result.data.user.role === 'ADMIN' ? '/admin' : '/'); }
+    try { const result = await login(email, password); onLogin(result.data); notify(`Selamat datang, ${result.data.user.nama}.`, 'success'); navigate(result.data.user.role === 'ADMIN' ? '/admin' : '/', { replace: true }); }
     catch (err) { setError(err instanceof Error ? err.message : 'Login gagal.'); }
     finally { setLoading(false); }
   };
 
-  return <main className="auth-page"><div className="auth-card"><Link to="/" className="back-link"><ArrowLeft size={16} /> Kembali ke jelajah</Link><div className="auth-icon"><ShieldCheck size={27} /></div><span className="eyebrow eyebrow-muted">Akses akun</span><h1>Masuk ke SNIJ</h1><p className="auth-intro">Masuk untuk mengirim kontribusi, melihat status, dan mengelola data sebagai admin.</p>{registeredEmail && <div className="notice notice-info"><CircleCheck size={18} /> Akun berhasil dibuat. Silakan masuk dengan password yang kamu daftarkan.</div>}{error && <div className="notice notice-error"><CircleAlert size={18} /> {error}</div>}<form onSubmit={submit} className="form-stack"><label>Email<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="nama@email.com" required /></label><label>Password<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Masukkan password" required /></label><button className="button button-primary button-full" disabled={loading}>{loading ? <><span className="button-spinner" /> Memeriksa...</> : <><LogIn size={17} /> Masuk</>}</button></form><p className="auth-switch">Belum punya akun? <Link to="/register">Daftar sekarang</Link></p></div></main>;
+  return <main className="auth-page"><div className="auth-card"><Link to="/" className="back-link"><ArrowLeft size={16} /> Kembali ke jelajah</Link><div className="auth-icon"><ShieldCheck size={27} /></div><span className="eyebrow eyebrow-muted">Akses akun</span><h1>Masuk ke SNIJ</h1><p className="auth-intro">Masuk untuk mengirim kontribusi, melihat status, dan mengelola data sebagai admin.</p>{sessionExpired && <div className="notice notice-error"><CircleAlert size={18} /> Sesi telah berakhir. Silakan masuk kembali.</div>}{registeredEmail && <div className="notice notice-info"><CircleCheck size={18} /> Akun berhasil dibuat. Silakan masuk dengan password yang kamu daftarkan.</div>}{error && <div className="notice notice-error"><CircleAlert size={18} /> {error}</div>}<form onSubmit={submit} className="form-stack"><label>Email<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="nama@email.com" required /></label><label>Password<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Masukkan password" required /></label><button className="button button-primary button-full" disabled={loading}>{loading ? <><span className="button-spinner" /> Memeriksa...</> : <><LogIn size={17} /> Masuk</>}</button></form><p className="auth-switch">Belum punya akun? <Link to="/register">Daftar sekarang</Link></p></div></main>;
 }
 
 export function RegisterPage({ notify }: { notify: (message: string, type?: Toast['type']) => void }) {

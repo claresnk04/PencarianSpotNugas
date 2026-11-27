@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Check, CircleAlert, CircleCheck, RefreshCw, ShieldCheck, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { getQueue, updateContribution } from '../lib/api';
+import { getAssetUrl, getQueue, updateContribution } from '../lib/api';
 import { LoadingTable, StatePanel } from '../components/Feedback';
 import { ApiRequestError } from '../types';
 import type { Contribution, Session, Toast } from '../types';
@@ -28,7 +28,7 @@ export function AdminPage({ session, notify }: { session: Session | null; notify
 }
 
 function QueueTable({ queue, onDecision }: { queue: Contribution[]; onDecision: (item: Contribution, status: Contribution['status']) => void }) {
-  return <div className="queue-table-wrap"><table className="queue-table"><thead><tr><th>Tempat</th><th>Kontributor</th><th>Fasilitas</th><th>Dikirim</th><th>Aksi</th></tr></thead><tbody>{queue.map((item) => <tr key={item.id}><td><strong>{item.nama_tempat}</strong><small>{item.alamat || 'Alamat belum ada informasi'}</small></td><td>{item.kontributor || 'Pengguna'}</td><td>{item.colokan_min === null ? 'Belum ada info' : `${item.colokan_min}% colokan`}<small>{item.noise_level || 'Suasana belum ada info'}</small></td><td>{new Date(item.dikirim_pada).toLocaleDateString('id-ID')}</td><td><div className="table-actions"><button className="icon-action approve" title="Setujui" onClick={() => onDecision(item, 'APPROVED')}><Check size={16} /></button><button className="icon-action revise" title="Minta revisi" onClick={() => onDecision(item, 'REVISION_NEEDED')}><RefreshCw size={16} /></button><button className="icon-action reject" title="Tolak" onClick={() => onDecision(item, 'REJECTED')}><X size={16} /></button></div></td></tr>)}</tbody></table></div>;
+  return <div className="queue-table-wrap"><table className="queue-table"><thead><tr><th>Tempat</th><th>Kontributor</th><th>Fasilitas</th><th>Dikirim</th><th>Aksi</th></tr></thead><tbody>{queue.map((item) => <tr key={item.id}><td><strong>{item.nama_tempat}</strong><small>{item.alamat || 'Alamat belum ada informasi'}</small></td><td>{item.kontributor || 'Pengguna'}</td><td>{item.colokan_min === null ? 'Belum ada info' : `${item.colokan_min}% colokan`}<small>{item.noise_level || 'Suasana belum ada info'}</small><small>{item.wifi === null ? 'WiFi belum diketahui' : item.wifi ? 'WiFi tersedia' : 'WiFi tidak tersedia'}</small>{item.fasilitas_lainnya?.length ? <small>{item.fasilitas_lainnya.join(', ')}</small> : null}{item.fasilitas_inklusif?.length ? <small>{item.fasilitas_inklusif.length} fasilitas inklusif</small> : null}{item.foto_speedtest && <a className="text-link" href={getAssetUrl(item.foto_speedtest)} target="_blank" rel="noreferrer">Lihat foto speedtest</a>}</td><td>{new Date(item.dikirim_pada).toLocaleDateString('id-ID')}</td><td><div className="table-actions"><button className="icon-action approve" title="Setujui" onClick={() => onDecision(item, 'APPROVED')}><Check size={16} /></button><button className="icon-action revise" title="Minta revisi" onClick={() => onDecision(item, 'REVISION_NEEDED')}><RefreshCw size={16} /></button><button className="icon-action reject" title="Tolak" onClick={() => onDecision(item, 'REJECTED')}><X size={16} /></button></div></td></tr>)}</tbody></table></div>;
 }
 
 function DecisionModal({ decision, note, setNote, onClose, onSubmit }: { decision: { item: Contribution; status: Contribution['status'] }; note: string; setNote: (value: string) => void; onClose: () => void; onSubmit: () => void }) {

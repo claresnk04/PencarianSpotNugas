@@ -1,17 +1,23 @@
 'use strict';
 const crypto = require('node:crypto');
+const fs = require('node:fs/promises');
+const path = require('node:path');
 const { ApiError, sendJson, errorBody, success, readBody } = require('./http');
 const { signJwt, verifyJwt, verifyPassword, hashPassword, DUMMY_HASH } = require('./auth');
 const { tx } = require('./db');
 
 const NOISE = ['Hening', 'Sedang', 'Ramai'];
 const STATUS = ['PENDING', 'APPROVED', 'REJECTED', 'REVISION_NEEDED'];
+const INCLUSIVE_FACILITIES = ['Akses kursi roda', 'Toilet aksesibel', 'Parkir disabilitas', 'Jalur pemandu', 'Ruang laktasi', 'Ruang ibadah', 'Area ramah anak'];
+const OTHER_FACILITIES = ['AC', 'Toilet', 'Parkir', 'Mushola', 'Area outdoor', 'Ruang non-smoking'];
+const IMAGE_TYPES = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
+const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
 const isInt = (v) => /^-?\d+$/.test(String(v).trim());
 const blank = (v) => v === undefined || v === null || (typeof v === 'string' && v.trim() === '');
 const fail422 = (message, fields) => { throw new ApiError(422, 'VALIDATION_ERROR', message, fields); };
 const toBool = (cond, fields, k, msg) => { if (!cond) fields[k] = msg; };
 
-function createApp({ db, jwtSecret, jwtTtl = 28800, corsOrigin = '*', log = false }) {
+function createApp({ db, jwtSecret, jwtTtl = 28800, corsOrigin = '*', uploadDir = path.join(__dirname, '..', 'uploads'), log = false }) {
   const loginFails = new Map(); // rate limit login sederhana (in-memory)
 
   // ---------- util ----------
@@ -38,7 +44,26 @@ function createApp({ db, jwtSecret, jwtTtl = 28800, corsOrigin = '*', log = fals
     return o;
   };
   const kontribusiOut = (r) => ({ id: r.id, nama_tempat: r.nama_tempat, alamat: r.alamat, lat: r.lat, lng: r.lng,
-    colokan_min: r.colokan_min, noise_level: r.noise_level, status: r.status, catatan_admin: r.catatan_admin, dikirim_pada: r.dikirim_pada });
+    colokan_min: r.colokan_min, noise_level: r.noise_level, status: r.status, catatan_admin: r.catatan_admin,
+    fasilitas_inklusif: parseInclusive(r.fasilitas_inklusif), wifi: r.wifi === null ? null : Boolean(r.wifi),
+    fasilitas_lainnya: parseFacilities(r.fasilitas_lainnya), foto_speedtest: r.foto_speedtest,
+    dikirim_pada: r.dikirim_pada, diproses_pada: r.diproses_pada ?? null });
+
+  const parseInclusive = (value) => {
+    if (!value) return null;
+    try { const parsed = JSON.parse(value); return Array.isArray(parsed) ? parsed.filter((item) => INCLUSIVE_FACILITIES.includes(item)) : null; }
+    catch { return null; }
+  };
+  const parseFacilities = (value) => {
+    if (!value) return null;
+    try { const parsed = JSON.parse(value); return Array.isArray(parsed) ? parsed.filter((item) => OTHER_FACILITIES.includes(item)) : null; }
+    catch { return null; }
+  };
+  const imageIsValid = (mime, data) => {
+    if (mime === 'image/jpeg') return data.length >= 3 && data[0] === 0xff && data[1] === 0xd8 && data[2] === 0xff;
+    if (mime === 'image/png') return data.length >= 8 && data.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]));
+    return mime === 'image/webp' && data.length >= 12 && data.toString('ascii', 0, 4) === 'RIFF' && data.toString('ascii', 8, 12) === 'WEBP';
+  };
 
   // ---------- handlers ----------
   const registerUser = async ({ req, res }) => {
@@ -99,6 +124,15 @@ function createApp({ db, jwtSecret, jwtTtl = 28800, corsOrigin = '*', log = fals
       if (vals.some((v) => !NOISE.includes(v))) f.noise = 'Pilih: Hening, Sedang, Ramai';
       else { where.push(`noise_level IN (${vals.map(() => '?').join(',')})`); args.push(...vals); }
     }
+    if (!blank(q.wifi)) {
+      if (!['true', 'false', '1', '0'].includes(String(q.wifi).toLowerCase())) f.wifi = 'Pilih: true atau false';
+      else { where.push('wifi = ?'); args.push(['true', '1'].includes(String(q.wifi).toLowerCase()) ? 1 : 0); }
+    }
+    if (!blank(q.fasilitas)) {
+      const vals = String(q.fasilitas).split(',').map((x) => x.trim());
+      if (vals.some((v) => !OTHER_FACILITIES.includes(v)) || new Set(vals).size !== vals.length) f.fasilitas = 'Pilih fasilitas yang tersedia dan tidak berulang';
+      else for (const value of vals) { where.push('fasilitas_lainnya LIKE ?'); args.push(`%${JSON.stringify(value)}%`); }
+    }
     const SORTS = { diperbarui_pada: 'diperbarui_pada', colokan_min: 'colokan_min', nama_tempat: 'nama_tempat', nama: 'nama_tempat' };
     let sortCol = 'diperbarui_pada';
     if (!blank(q.sort)) { if (!Object.hasOwn(SORTS, q.sort)) f.sort = 'Pilih: diperbarui_pada, colokan_min, nama_tempat'; else sortCol = SORTS[q.sort]; }
@@ -106,15 +140,16 @@ function createApp({ db, jwtSecret, jwtTtl = 28800, corsOrigin = '*', log = fals
     if (Object.keys(f).length) fail422('Periksa filter Anda.', f);
     const w = where.length ? `WHERE ${where.join(' AND ')}` : '';
     const total = db.prepare(`SELECT COUNT(*) c FROM tempat ${w}`).get(...args).c;
-    const rows = db.prepare(`SELECT id,nama_tempat,alamat,lat,lng,colokan_min,noise_level,diperbarui_pada FROM tempat ${w}
-      ORDER BY ${sortCol} ${dir}, id ${dir} LIMIT ? OFFSET ?`).all(...args, limit, (page - 1) * limit);
+    const rows = db.prepare(`SELECT id,nama_tempat,alamat,lat,lng,colokan_min,noise_level,fasilitas_inklusif,wifi,fasilitas_lainnya,foto_speedtest,diperbarui_pada FROM tempat ${w}
+      ORDER BY ${sortCol} ${dir}, id ${dir} LIMIT ? OFFSET ?`).all(...args, limit, (page - 1) * limit)
+      .map((row) => ({ ...row, fasilitas_inklusif: parseInclusive(row.fasilitas_inklusif), wifi: row.wifi === null ? null : Boolean(row.wifi), fasilitas_lainnya: parseFacilities(row.fasilitas_lainnya) }));
     sendJson(res, 200, success(total ? 'Berhasil mengambil daftar tempat.' : 'Belum ada tempat yang cocok', rows, meta(page, limit, total)));
   };
 
   const getTempat = ({ res, params }) => {
-    const r = db.prepare('SELECT id,nama_tempat,alamat,lat,lng,colokan_min,noise_level,diperbarui_pada FROM tempat WHERE id=?').get(+params[0]);
+    const r = db.prepare('SELECT id,nama_tempat,alamat,lat,lng,colokan_min,noise_level,fasilitas_inklusif,wifi,fasilitas_lainnya,foto_speedtest,diperbarui_pada FROM tempat WHERE id=?').get(+params[0]);
     if (!r) throw new ApiError(404, 'NOT_FOUND', 'Tempat tidak ditemukan.');
-    sendJson(res, 200, success('Berhasil mengambil detail tempat.', r));
+    sendJson(res, 200, success('Berhasil mengambil detail tempat.', { ...r, fasilitas_inklusif: parseInclusive(r.fasilitas_inklusif), wifi: r.wifi === null ? null : Boolean(r.wifi), fasilitas_lainnya: parseFacilities(r.fasilitas_lainnya) }));
   };
 
   function validateKontribusi(b) {
@@ -131,6 +166,33 @@ function createApp({ db, jwtSecret, jwtTtl = 28800, corsOrigin = '*', log = fals
     }
     p.noise_level = null;
     if (!blank(b.noise_level)) { if (!NOISE.includes(b.noise_level)) f.noise_level = 'Pilih: Hening, Sedang, Ramai'; else p.noise_level = b.noise_level; }
+    p.fasilitas_inklusif = null;
+    if (!blank(b.fasilitas_inklusif)) {
+      if (!Array.isArray(b.fasilitas_inklusif) || b.fasilitas_inklusif.length > INCLUSIVE_FACILITIES.length || b.fasilitas_inklusif.some((item) => !INCLUSIVE_FACILITIES.includes(item))) {
+        f.fasilitas_inklusif = `Pilih maksimal ${INCLUSIVE_FACILITIES.length} fasilitas yang tersedia.`;
+      } else if (new Set(b.fasilitas_inklusif).size !== b.fasilitas_inklusif.length) {
+        f.fasilitas_inklusif = 'Fasilitas tidak boleh dipilih berulang.';
+      } else p.fasilitas_inklusif = JSON.stringify(b.fasilitas_inklusif);
+    }
+    p.wifi = null;
+    if (b.wifi !== undefined && b.wifi !== null) {
+      if (typeof b.wifi !== 'boolean') f.wifi = 'Pilih true atau false';
+      else p.wifi = b.wifi ? 1 : 0;
+    }
+    p.fasilitas_lainnya = null;
+    if (!blank(b.fasilitas_lainnya)) {
+      if (!Array.isArray(b.fasilitas_lainnya) || b.fasilitas_lainnya.length > OTHER_FACILITIES.length || b.fasilitas_lainnya.some((item) => !OTHER_FACILITIES.includes(item))) {
+        f.fasilitas_lainnya = `Pilih maksimal ${OTHER_FACILITIES.length} fasilitas yang tersedia.`;
+      } else if (new Set(b.fasilitas_lainnya).size !== b.fasilitas_lainnya.length) {
+        f.fasilitas_lainnya = 'Fasilitas tidak boleh dipilih berulang.';
+      } else p.fasilitas_lainnya = JSON.stringify(b.fasilitas_lainnya);
+    }
+    p.foto_speedtest = null;
+    if (!blank(b.foto_speedtest)) {
+      if (typeof b.foto_speedtest !== 'string' || !/^\/api\/v1\/uploads\/speedtest\/[0-9a-f-]{36}\.(jpg|png|webp)$/.test(b.foto_speedtest)) {
+        f.foto_speedtest = 'Unggah foto speedtest menggunakan endpoint yang tersedia.';
+      } else p.foto_speedtest = b.foto_speedtest;
+    }
     p.alamat = null;
     if (!blank(b.alamat)) { if (typeof b.alamat !== 'string' || b.alamat.trim().length > 255) f.alamat = 'Maksimal 255 karakter'; else p.alamat = b.alamat.trim(); }
     p.lat = null; p.lng = null;
@@ -159,13 +221,29 @@ function createApp({ db, jwtSecret, jwtTtl = 28800, corsOrigin = '*', log = fals
         }
       }
       const now = new Date().toISOString();
-      const r = db.prepare(`INSERT INTO kontribusi(nama_tempat,alamat,lat,lng,colokan_min,noise_level,status,user_id,dikirim_pada)
-        VALUES(?,?,?,?,?,?,'PENDING',?,?)`).run(p.nama_tempat, p.alamat, p.lat, p.lng, p.colokan_min, p.noise_level, user.id, now);
+      const r = db.prepare(`INSERT INTO kontribusi(nama_tempat,alamat,lat,lng,colokan_min,noise_level,fasilitas_inklusif,wifi,fasilitas_lainnya,foto_speedtest,status,user_id,dikirim_pada)
+        VALUES(?,?,?,?,?,?,?,?,?,?,'PENDING',?,?)`)
+        .run(p.nama_tempat, p.alamat, p.lat, p.lng, p.colokan_min, p.noise_level, p.fasilitas_inklusif, p.wifi, p.fasilitas_lainnya, p.foto_speedtest, user.id, now);
       rec = db.prepare('SELECT * FROM kontribusi WHERE id=?').get(r.lastInsertRowid);
       if (key) db.prepare('INSERT INTO idempotency(key,user_id,fingerprint,kontribusi_id,created_at) VALUES(?,?,?,?,?)').run(key, user.id, fp, rec.id, now);
     });
     sendJson(res, 201, success('Terima kasih! Kontribusi Anda berhasil dikirim dan sedang menunggu moderasi.', kontribusiOut(rec)),
       replay ? { 'Idempotency-Replayed': 'true' } : {});
+  };
+
+  const listKontribusiSaya = ({ res, query: q, user }) => {
+    const f = {}, where = ['user_id=?', 'deleted_at IS NULL'], args = [user.id];
+    const { page, limit } = paging(q, f, 10);
+    if (!blank(q.status)) {
+      if (!STATUS.includes(q.status)) f.status = `Pilih: ${STATUS.join(', ')}`;
+      else { where.push('status=?'); args.push(q.status); }
+    }
+    if (Object.keys(f).length) fail422('Periksa filter status kontribusi Anda.', f);
+    const w = `WHERE ${where.join(' AND ')}`;
+    const total = db.prepare(`SELECT COUNT(*) c FROM kontribusi ${w}`).get(...args).c;
+    const rows = db.prepare(`SELECT * FROM kontribusi ${w}
+      ORDER BY dikirim_pada DESC, id DESC LIMIT ? OFFSET ?`).all(...args, limit, (page - 1) * limit);
+    sendJson(res, 200, success(total ? 'Berhasil mengambil status kontribusi Anda.' : 'Belum ada kontribusi.', rows.map(kontribusiOut), meta(page, limit, total)));
   };
 
   const listAntrean = ({ res, query: q }) => {
@@ -207,12 +285,41 @@ function createApp({ db, jwtSecret, jwtTtl = 28800, corsOrigin = '*', log = fals
         .run(b.status, catatan, user.id, now, id);
       if (r.changes !== 1) throw new ApiError(409, 'STATE_CONFLICT', 'Status kontribusi sudah diubah oleh admin lain.');
       if (b.status === 'APPROVED') // BR-01: tampil publik hanya setelah Terverifikasi
-        db.prepare('INSERT INTO tempat(nama_tempat,alamat,lat,lng,colokan_min,noise_level,kontribusi_id,diperbarui_pada) VALUES(?,?,?,?,?,?,?,?)')
-          .run(cur.nama_tempat, cur.alamat, cur.lat, cur.lng, cur.colokan_min, cur.noise_level, cur.id, now);
+        db.prepare('INSERT INTO tempat(nama_tempat,alamat,lat,lng,colokan_min,noise_level,fasilitas_inklusif,wifi,fasilitas_lainnya,foto_speedtest,kontribusi_id,diperbarui_pada) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)')
+          .run(cur.nama_tempat, cur.alamat, cur.lat, cur.lng, cur.colokan_min, cur.noise_level, cur.fasilitas_inklusif, cur.wifi, cur.fasilitas_lainnya, cur.foto_speedtest, cur.id, now);
       return db.prepare('SELECT * FROM kontribusi WHERE id=?').get(id);
     });
     const msg = { APPROVED: 'Kontribusi disetujui — kini tampil di publik.', REJECTED: 'Kontribusi ditolak.', REVISION_NEEDED: 'Kontribusi dikembalikan untuk revisi.' }[b.status];
     sendJson(res, 200, success(msg, { ...kontribusiOut(out), diproses_pada: out.diproses_pada }));
+  };
+
+  const uploadSpeedtest = async ({ req, res }) => {
+    const body = await readBody(req, Math.ceil(MAX_IMAGE_SIZE * 4 / 3) + 16384);
+    const fields = {};
+    if (typeof body.mime_type !== 'string' || !Object.hasOwn(IMAGE_TYPES, body.mime_type)) fields.mime_type = 'Gunakan gambar JPEG, PNG, atau WebP.';
+    if (typeof body.data !== 'string' || !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(body.data)) fields.data = 'Data gambar tidak valid.';
+    if (Object.keys(fields).length) fail422('Foto speedtest belum dapat diunggah.', fields);
+    const data = Buffer.from(body.data, 'base64');
+    if (data.length > MAX_IMAGE_SIZE) fail422('Ukuran foto maksimal 3 MiB.', { data: 'Ukuran foto maksimal 3 MiB.' });
+    if (!imageIsValid(body.mime_type, data)) fail422('Isi file tidak sesuai format gambar.', { data: 'Unggah file JPEG, PNG, atau WebP yang valid.' });
+    const id = crypto.randomUUID();
+    const extension = IMAGE_TYPES[body.mime_type];
+    await fs.mkdir(uploadDir, { recursive: true });
+    await fs.writeFile(path.join(uploadDir, `${id}.${extension}`), data, { flag: 'wx', mode: 0o640 });
+    sendJson(res, 201, success('Foto speedtest berhasil diunggah.', { foto_speedtest: `/api/v1/uploads/speedtest/${id}.${extension}` }));
+  };
+
+  const getSpeedtest = async ({ res, params }) => {
+    const [id, extension] = params;
+    const mime = { jpg: 'image/jpeg', png: 'image/png', webp: 'image/webp' }[extension];
+    try {
+      const data = await fs.readFile(path.join(uploadDir, `${id}.${extension}`));
+      res.writeHead(200, { 'Content-Type': mime, 'Content-Length': data.length, 'Cache-Control': 'public, max-age=31536000, immutable', 'X-Content-Type-Options': 'nosniff' });
+      res.end(data);
+    } catch (error) {
+      if (error.code === 'ENOENT') throw new ApiError(404, 'NOT_FOUND', 'Foto speedtest tidak ditemukan.');
+      throw error;
+    }
   };
 
   // ---------- router ----------
@@ -223,7 +330,10 @@ function createApp({ db, jwtSecret, jwtTtl = 28800, corsOrigin = '*', log = fals
     R('POST', /^\/api\/v1\/auth\/login$/, null, login),
     R('GET', /^\/api\/v1\/tempat$/, null, listTempat),
     R('GET', /^\/api\/v1\/tempat\/(\d+)$/, null, getTempat),
+    R('POST', /^\/api\/v1\/upload\/speedtest$/, 'ANY', uploadSpeedtest),
+    R('GET', /^\/api\/v1\/uploads\/speedtest\/([0-9a-f-]{36})\.(jpg|png|webp)$/, null, getSpeedtest),
     R('POST', /^\/api\/v1\/kontribusi$/, 'ANY', createKontribusi),
+    R('GET', /^\/api\/v1\/kontribusi\/saya$/, 'ANY', listKontribusiSaya),
     R('GET', /^\/api\/v1\/admin\/antrean$/, 'ADMIN', listAntrean),
     R('PATCH', /^\/api\/v1\/admin\/antrean\/(\d+)$/, 'ADMIN', patchAntrean),
   ];
